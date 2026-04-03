@@ -1,26 +1,24 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { MessageCircle, ChevronRight, Send, User, X, Minus, Maximize2, Minimize2 } from 'lucide-react'
+import { MessageCircle, ChevronRight, Send, User, X, Minus, Maximize2, Minimize2, Edit2, Trash2, Eye, EyeOff } from 'lucide-react'
 
 /**
  * 플로팅 실시간 채팅 컴포넌트
- *
- * - 우측 하단 고정 플로팅 버튼 → 클릭하면 채팅창 펼침
- * - 펼치기 / 접기 토글
- * - 드래그로 크기 조절 가능 (좌상단 모서리)
- * - 최대화 / 복원 토글
- * - 전체 페이지에서 접근 가능 (Layout에 배치)
  */
 
 interface ChatMsg {
   id: number
   author_name: string
   content: string
+  is_edited: boolean
+  original_content: string | null
+  is_deleted: boolean
   created_at: string
 }
 
 const NICK_COLORS = ['#5865F2', '#57F287', '#FEE75C', '#EB459E', '#ED4245', '#E67E22', '#9B59B6', '#1ABC9C']
-function nickColor(name: string) {
+function nickColor(name: string, isAdminUser: boolean = false) {
+  if (isAdminUser) return '#E74C3C'
   let h = 0
   for (let i = 0; i < name.length; i++) h = name.charCodeAt(i) + ((h << 5) - h)
   return NICK_COLORS[Math.abs(h) % NICK_COLORS.length]
@@ -54,41 +52,45 @@ const FloatingChat: React.FC = () => {
   const chatContainerRef = useRef<HTMLDivElement>(null)
   const lastMsgCountRef = useRef(0)
 
+  // 관리자 모드 (비밀번호 기반)
+  const isAdmin = authorPassword === 'admin1234'
+  const [editTarget, setEditTarget] = useState<number | null>(null)
+  const [editContent, setEditContent] = useState('')
+  const [showOriginalIds, setShowOriginalIds] = useState<Set<number>>(new Set())
+
   // ── 리사이즈 관련 ──
   const isResizingRef = useRef(false)
   const resizeStartRef = useRef({ x: 0, y: 0, w: 0, h: 0 })
 
   // 메시지 폴링 — 열려있을 때만 (접혀있어도 백그라운드 카운트용으로 가져옴)
+  const fetchMessages = useCallback(async (cancelled = false) => {
+    try {
+      const res = await fetch('/api/chat/general/messages?limit=30')
+      if (res.ok && !cancelled) {
+        const data: ChatMsg[] = await res.json()
+        if (!isOpen && data.length > lastMsgCountRef.current) {
+          setUnreadCount((prev) => prev + (data.length - lastMsgCountRef.current))
+        }
+        lastMsgCountRef.current = data.length
+        setMessages(data)
+      }
+    } catch (err) {
+      // 네트워크 오류 무시
+    } finally {
+      if (!cancelled) setIsLoading(false)
+    }
+  }, [isOpen])
+
   useEffect(() => {
     let cancelled = false
-
-    const fetchMessages = async () => {
-      try {
-        const res = await fetch('/api/chat/general/messages?limit=30')
-        if (res.ok && !cancelled) {
-          const data: ChatMsg[] = await res.json()
-          // 읽지 않은 메시지 수 계산 (채팅창 닫혀있을 때)
-          if (!isOpen && data.length > lastMsgCountRef.current) {
-            setUnreadCount((prev) => prev + (data.length - lastMsgCountRef.current))
-          }
-          lastMsgCountRef.current = data.length
-          setMessages(data)
-        }
-      } catch (err) {
-        // 네트워크 오류 무시
-      } finally {
-        if (!cancelled) setIsLoading(false)
-      }
-    }
-
-    fetchMessages()
-    const intervalId = setInterval(fetchMessages, 3000)
+    fetchMessages(cancelled)
+    const intervalId = setInterval(() => fetchMessages(cancelled), 3000)
 
     return () => {
       cancelled = true
       clearInterval(intervalId)
     }
-  }, [isOpen])
+  }, [fetchMessages])
 
   // 새 메시지 → 스크롤
   useEffect(() => {
@@ -125,8 +127,7 @@ const FloatingChat: React.FC = () => {
         }),
       })
       if (res.ok) {
-        const newMsg: ChatMsg = await res.json()
-        setMessages((prev) => [...prev, newMsg])
+        await fetchMessages()
         setChatInput('')
       } else {
         const err = await res.json()
@@ -136,6 +137,55 @@ const FloatingChat: React.FC = () => {
       alert('메시지 전송에 실패했습니다.')
     } finally {
       setIsSending(false)
+    }
+  }
+
+  // ── 메시지 수정 ──
+  const handleEdit = async () => {
+    if (!editTarget || !editContent.trim()) return
+
+    try {
+      const res = await fetch(`/api/chat/messages/${editTarget}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          author_name: authorName,
+          password: authorPassword,
+          new_content: editContent.trim()
+        }),
+      })
+
+      if (res.ok) {
+        await fetchMessages()
+        setEditTarget(null)
+        setEditContent('')
+      } else {
+        const data = await res.json()
+        alert(data.error || '수정에 실패했습니다.')
+      }
+    } catch {
+      alert('수정에 실패했습니다.')
+    }
+  }
+
+  // ── 메시지 삭제 ──
+  const handleDelete = async (id: number) => {
+    if (!window.confirm('이 메시지를 정말 삭제하시겠습니까?')) return
+    try {
+      const res = await fetch(`/api/chat/messages/${id}`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ author_name: authorName, password: authorPassword }),
+      })
+
+      if (res.ok) {
+        await fetchMessages()
+      } else {
+        const data = await res.json()
+        alert(data.error || '삭제에 실패했습니다.')
+      }
+    } catch {
+      alert('삭제에 실패했습니다.')
     }
   }
 
@@ -156,6 +206,15 @@ const FloatingChat: React.FC = () => {
     localStorage.setItem('chatAuthorName', tempNick.trim())
     localStorage.setItem('chatAuthorPassword', tempPw.trim())
     setShowNickModal(false)
+  }
+
+  const toggleOriginal = (id: number) => {
+    setShowOriginalIds(prev => {
+      const newSet = new Set(prev)
+      if (newSet.has(id)) newSet.delete(id)
+      else newSet.add(id)
+      return newSet
+    })
   }
 
   // ── 리사이즈 핸들러 (좌상단 모서리 드래그) ──
@@ -327,23 +386,90 @@ const FloatingChat: React.FC = () => {
             </div>
           ) : (
             messages.map((msg) => (
-              <div key={msg.id} className="py-1 hover:bg-gray-800/30 rounded-md px-1.5 -mx-1.5 transition-colors">
+              <div key={msg.id} className="group py-1 hover:bg-gray-800/30 rounded-md px-1.5 -mx-1.5 transition-colors relative">
                 <div className="flex items-start gap-2">
                   <div
                     className="w-6 h-6 rounded-full flex items-center justify-center text-white font-bold text-[9px] shrink-0 mt-0.5"
-                    style={{ backgroundColor: nickColor(msg.author_name) }}
+                    style={{ backgroundColor: nickColor(msg.author_name, false) }}
                   >
                     {msg.author_name[0]?.toUpperCase() || '?'}
                   </div>
-                  <div className="flex-1 min-w-0">
+                  <div className="flex-1 min-w-0 pr-8">
                     <div className="flex items-center gap-1.5 mb-0.5">
-                      <span className="text-[11px] font-semibold" style={{ color: nickColor(msg.author_name) }}>{msg.author_name}</span>
+                      <span className="text-[11px] font-semibold" style={{ color: nickColor(msg.author_name) }}>
+                        {msg.author_name}
+                      </span>
                       <span className="text-[9px] text-gray-600">
                         {new Date(msg.created_at).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' })}
                       </span>
                     </div>
-                    <p className="text-gray-300 text-xs whitespace-pre-wrap break-words leading-relaxed">{msg.content}</p>
+
+                    {editTarget === msg.id ? (
+                      <div className="flex flex-col gap-1 mt-1">
+                        <input
+                          type="text"
+                          value={editContent}
+                          onChange={(e) => setEditContent(e.target.value)}
+                          className="w-full bg-gray-950 border border-gray-700 rounded px-2 py-1 text-xs text-white focus:outline-none focus:border-blue-500"
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') handleEdit()
+                            if (e.key === 'Escape') setEditTarget(null)
+                          }}
+                          autoFocus
+                        />
+                        <div className="flex gap-2">
+                          <button onClick={handleEdit} className="text-[10px] text-blue-400">저장</button>
+                          <button onClick={() => setEditTarget(null)} className="text-[10px] text-gray-400">취소</button>
+                        </div>
+                      </div>
+                    ) : (
+                      <div>
+                        <p className={`text-xs whitespace-pre-wrap break-words leading-relaxed ${msg.is_deleted ? 'text-gray-500 italic' : 'text-gray-300'}`}>
+                          {msg.content}
+                          {msg.is_edited && !msg.is_deleted && (
+                            <span className="text-[9px] text-gray-500 ml-1">(수정됨)</span>
+                          )}
+                        </p>
+                        {msg.is_edited && !msg.is_deleted && (
+                          <div className="mt-1">
+                            <button 
+                              onClick={() => toggleOriginal(msg.id)}
+                              className="text-[9px] flex items-center gap-1 text-blue-400 hover:text-blue-300 transition-colors"
+                            >
+                              {showOriginalIds.has(msg.id) ? <><EyeOff className="w-2.5 h-2.5"/> 숨기기</> : <><Eye className="w-2.5 h-2.5"/> 원본</>}
+                            </button>
+                            {showOriginalIds.has(msg.id) && (
+                              <div className="mt-1 p-1.5 bg-gray-900 rounded border border-gray-800 text-[10px] text-gray-400 whitespace-pre-wrap">
+                                {msg.original_content}
+                              </div>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </div>
+
+                  {isAdmin && !msg.is_deleted && (
+                    <div className="absolute right-1 top-1 opacity-0 group-hover:opacity-100 transition-opacity flex items-center bg-gray-800 rounded shadow-md">
+                      <button
+                        onClick={() => {
+                          setEditTarget(msg.id)
+                          setEditContent(msg.content)
+                        }}
+                        className="p-1.5 text-gray-400 hover:text-blue-400"
+                        title="수정"
+                      >
+                        <Edit2 className="w-3 h-3" />
+                      </button>
+                      <button
+                        onClick={() => handleDelete(msg.id)}
+                        className="p-1.5 text-gray-400 hover:text-red-400"
+                        title="삭제"
+                      >
+                        <Trash2 className="w-3 h-3" />
+                      </button>
+                    </div>
+                  )}
                 </div>
               </div>
             ))
@@ -399,7 +525,7 @@ const FloatingChat: React.FC = () => {
                   type="text"
                   value={tempNick}
                   onChange={(e) => setTempNick(e.target.value)}
-                  placeholder="닉네임을 입력하세요"
+                  placeholder="닉네임을 입력하세요 ('관리자' 입력 시 관리자 모드)"
                   maxLength={50}
                   className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/30"
                   autoFocus
@@ -411,7 +537,7 @@ const FloatingChat: React.FC = () => {
                   type="password"
                   value={tempPw}
                   onChange={(e) => setTempPw(e.target.value)}
-                  placeholder="비밀번호 (메시지 삭제 시 필요)"
+                  placeholder="비밀번호"
                   maxLength={100}
                   className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/30"
                   onKeyDown={(e) => { if (e.key === 'Enter') saveNickname() }}
@@ -440,4 +566,3 @@ const FloatingChat: React.FC = () => {
 }
 
 export default FloatingChat
-

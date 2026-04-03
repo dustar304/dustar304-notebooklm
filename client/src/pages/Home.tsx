@@ -16,6 +16,7 @@ import {
   Cpu,
 } from 'lucide-react'
 import Footer from '../components/Footer'
+import waveVideo from '../wave.mp4'
 
 const Home = () => {
   const navigate = useNavigate()
@@ -39,7 +40,7 @@ const Home = () => {
     },
     {
       icon: Factory,
-      title: '작업실적 등록',
+      title: '작업 실적 등록',
       desc: 'MES 바코드/QR 스캔으로 공정별 생산 실적·불량 수량을 빠르게 등록·관리',
       path: '/sf-production',
       gradient: 'from-emerald-500 to-teal-500',
@@ -47,7 +48,7 @@ const Home = () => {
     },
     {
       icon: Eye,
-      title: 'AI 비전 검사',
+      title: 'AI 비전 검사 모니터링',
       desc: '실시간 웹캠 AI 불량 감지, 신뢰도 스코어, 이미지 캡처 히스토리 로그',
       path: '/sf-vision',
       gradient: 'from-violet-500 to-purple-600',
@@ -55,57 +56,75 @@ const Home = () => {
     },
     {
       icon: Package,
-      title: '품목등록',
-      desc: '품목 마스터 등록·관리, 품목코드/규격/계정 정보 일괄 관리',
-      path: '/sf-items',
+      title: '검사 요청 등록',
+      desc: '품목에 대한 검사 요청 등록 및 AI 비전 자동 불량 판별 등록',
+      path: '/sf-defect-types',
       gradient: 'from-amber-500 to-orange-500',
       badge: '기준정보',
     },
   ]
 
   return (
-    <div className="flex-1 overflow-auto bg-gray-950">
+    <div className="flex-1 overflow-auto bg-slate-50">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
 
         {/* ── 헤더 ── */}
-        <div className="text-center mb-8 sm:mb-12">
-          {/* 기관 배지 */}
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-semibold mb-3 sm:mb-4">
-            <Award className="w-3.5 h-3.5" />
-            한국 품질재단 (KFQ) 공식 실습 플랫폼
+        <div className="relative text-center mb-8 sm:mb-12 py-16 sm:py-24 rounded-3xl overflow-hidden shadow-sm border border-slate-200 bg-slate-900">
+          {/* 동영상 배경 (자동 재생 및 마우스 호버 시 재생 보장) */}
+          <div className="absolute inset-0 z-0 w-full h-full">
+            <video 
+              src={waveVideo} 
+              type="video/mp4"
+              className="w-full h-full object-cover opacity-80"
+              autoPlay
+              muted
+              loop
+              playsInline
+              onMouseEnter={(e) => e.currentTarget.play()}
+            />
+            {/* 영상 위에 약간의 오버레이 추가 (가독성을 위해) */}
+            <div className="absolute inset-0 bg-slate-900/30 pointer-events-none"></div>
           </div>
 
-          <h1 className="text-2xl sm:text-4xl font-bold text-white tracking-tight mb-3">
-            제조 AI 데이터분석
-            <span className="text-blue-400 ml-2">스마트팩토리 실습</span>
-          </h1>
-          <p className="text-gray-400 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed">
-            AI 비전 불량 검사 · MES 작업실적 관리 · 생산 대시보드부터
-            PDF 문서 편집·AI 동영상 제작까지 통합 실습 환경을 제공합니다
-          </p>
+          <div className="relative z-10 px-4">
+            {/* 기관 배지 */}
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/20 backdrop-blur-md border border-blue-400/30 text-blue-100 text-xs font-semibold mb-3 sm:mb-4 shadow-sm">
+              <Award className="w-3.5 h-3.5" />
+              한국 품질재단 (KFQ) 공식 실습 플랫폼
+            </div>
 
-          {/* 통계 뱃지 */}
-          <div className="flex items-center justify-center gap-4 mt-5 flex-wrap">
-            {[
-              { label: '실습 모듈', value: '6개' },
-              { label: 'AI 기능', value: '10+' },
-              { label: '스마트팩토리', value: '4종' },
-            ].map((stat) => (
-              <div key={stat.label} className="flex items-center gap-2 px-3 py-1.5 bg-gray-800/60 rounded-lg border border-gray-700/40">
-                <span className="text-blue-400 font-bold text-sm">{stat.value}</span>
-                <span className="text-gray-500 text-xs">{stat.label}</span>
-              </div>
-            ))}
+            <h1 className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight mb-4 drop-shadow-lg">
+              제조 AI 데이터분석
+              <span className="text-blue-400 ml-2">스마트팩토리 실습</span>
+            </h1>
+            <p className="text-slate-200 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed font-medium bg-slate-900/40 backdrop-blur-md p-3 rounded-2xl inline-block border border-slate-700/50">
+              AI 비전 불량 검사 · MES 작업실적 관리 · 생산 대시보드부터<br className="hidden sm:block"/>
+              PDF 문서 편집·AI 동영상 제작까지 통합 실습 환경을 제공합니다
+            </p>
+
+            {/* 통계 뱃지 */}
+            <div className="flex items-center justify-center gap-4 mt-6 flex-wrap">
+              {[
+                { label: '실습 모듈', value: '6개' },
+                { label: 'AI 기능', value: '10+' },
+                { label: '스마트팩토리', value: '4종' },
+              ].map((stat) => (
+                <div key={stat.label} className="flex items-center gap-2 px-4 py-2 bg-slate-800/60 backdrop-blur-md rounded-xl border border-slate-600/50 shadow-sm hover:shadow-md hover:bg-slate-800/80 transition-all">
+                  <span className="text-blue-400 font-bold text-base">{stat.value}</span>
+                  <span className="text-slate-300 text-sm font-medium">{stat.label}</span>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
 
         {/* ── 제조 AI 스마트팩토리 실습 섹션 ── */}
         <div className="mb-8 sm:mb-12">
           <div className="flex items-center gap-2 mb-4 sm:mb-6">
-            <div className="w-5 h-5 bg-blue-600 rounded flex items-center justify-center shrink-0">
-              <Cpu className="w-3 h-3 text-white" />
+            <div className="w-6 h-6 bg-blue-100 rounded-lg flex items-center justify-center shrink-0 border border-blue-200">
+              <Cpu className="w-3.5 h-3.5 text-blue-600" />
             </div>
-            <h2 className="text-sm font-semibold text-blue-400 uppercase tracking-wider">
+            <h2 className="text-sm font-bold text-blue-700 uppercase tracking-wider">
               스마트팩토리 실습 모듈
             </h2>
           </div>
@@ -115,20 +134,20 @@ const Home = () => {
               <button
                 key={card.path}
                 onClick={() => navigate(card.path)}
-                className="w-full bg-gray-900/60 border border-gray-800/60 rounded-xl p-4 sm:p-5 text-left hover:border-blue-500/40 hover:bg-blue-500/5 active:bg-gray-800/40 transition-all group"
+                className="w-full bg-white border border-slate-200 shadow-sm rounded-xl p-4 sm:p-5 text-left hover:border-blue-300 hover:shadow-md hover:bg-blue-50/50 active:bg-slate-50 transition-all group"
               >
                 <div className="flex items-start gap-3">
-                  <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${card.gradient} flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform`}>
+                  <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${card.gradient} flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform shadow-sm`}>
                     <card.icon className="w-5 h-5 text-white" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
-                      <h3 className="text-white font-medium text-sm">{card.title}</h3>
-                      <span className="text-[10px] px-1.5 py-0.5 rounded bg-blue-500/15 text-blue-400 font-medium shrink-0">
+                      <h3 className="text-slate-800 font-bold text-sm">{card.title}</h3>
+                      <span className="text-[10px] px-1.5 py-0.5 rounded bg-blue-50 border border-blue-100 text-blue-600 font-semibold shrink-0">
                         {card.badge}
                       </span>
                     </div>
-                    <p className="text-gray-500 text-xs leading-relaxed">{card.desc}</p>
+                    <p className="text-slate-500 text-xs leading-relaxed font-medium">{card.desc}</p>
                   </div>
                 </div>
               </button>
@@ -138,20 +157,20 @@ const Home = () => {
 
         {/* ── 데이터 흐름 ── */}
         <div className="mb-8 sm:mb-12">
-          <h2 className="text-xs font-medium text-gray-600 uppercase tracking-wider mb-4 text-center">
+          <h2 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-4 text-center">
             제조 AI 데이터 처리 흐름
           </h2>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-3">
             {workflowSteps.map((step, i, arr) => (
               <React.Fragment key={step.text}>
-                <div className="flex items-center gap-2 bg-gray-800/50 rounded-lg px-4 py-2.5 w-full sm:w-auto justify-center">
-                  <step.icon className="w-4 h-4 text-blue-400 shrink-0" />
-                  <span className="text-gray-300 text-sm whitespace-nowrap">{step.text}</span>
+                <div className="flex items-center gap-2 bg-white border border-slate-200 shadow-sm rounded-lg px-4 py-2.5 w-full sm:w-auto justify-center font-medium">
+                  <step.icon className="w-4 h-4 text-blue-500 shrink-0" />
+                  <span className="text-slate-700 text-sm whitespace-nowrap">{step.text}</span>
                 </div>
                 {i < arr.length - 1 && (
                   <>
-                    <ArrowDown className="w-4 h-4 text-gray-600 shrink-0 sm:hidden" />
-                    <ArrowRight className="w-4 h-4 text-gray-600 shrink-0 hidden sm:block" />
+                    <ArrowDown className="w-4 h-4 text-slate-300 shrink-0 sm:hidden" />
+                    <ArrowRight className="w-4 h-4 text-slate-300 shrink-0 hidden sm:block" />
                   </>
                 )}
               </React.Fragment>

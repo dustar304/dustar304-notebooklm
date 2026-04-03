@@ -4,10 +4,17 @@ import { query } from '../db'
 const router = express.Router()
 
 /**
+ * 관리자 권한 확인 함수
+ * 여기서는 비밀번호가 일치하면 누구나 권한을 가지도록 수정
+ */
+const isAdmin = (password?: string) => {
+  return password === (process.env.ADMIN_PASSWORD || 'admin1234')
+}
+
+/**
  * 채팅 메시지 API
  *
- * 채널별 메시지를 관리하며, 비밀번호 기반으로 본인 메시지 삭제를 지원한다.
- * 인증(로그인) 없이 닉네임 + 비밀번호 조합으로 동작한다.
+ * 채널별 메시지를 관리하며, 관리자 전용 삭제/수정을 지원한다.
  */
 
 // 메시지 목록 조회 (채널별, 최신순 페이지네이션)
@@ -21,7 +28,7 @@ router.get('/:channel/messages', async (req: Request, res: Response) => {
     if (before) {
       // 특정 ID 이전 메시지 (스크롤 위로 올릴 때)
       messages = await query(
-        `SELECT id, channel, author_name, content, created_at
+        `SELECT id, channel, author_name, content, is_edited, original_content, is_deleted, created_at
          FROM chat_messages
          WHERE channel = $1 AND id < $2
          ORDER BY id DESC
@@ -31,7 +38,7 @@ router.get('/:channel/messages', async (req: Request, res: Response) => {
     } else {
       // 최신 메시지 (처음 로드)
       messages = await query(
-        `SELECT id, channel, author_name, content, created_at
+        `SELECT id, channel, author_name, content, is_edited, original_content, is_deleted, created_at
          FROM chat_messages
          WHERE channel = $1
          ORDER BY id DESC
@@ -54,7 +61,7 @@ router.get('/:channel/messages/after/:id', async (req: Request, res: Response) =
     const { channel, id } = req.params
 
     const messages = await query(
-      `SELECT id, channel, author_name, content, created_at
+      `SELECT id, channel, author_name, content, is_edited, original_content, is_deleted, created_at
        FROM chat_messages
        WHERE channel = $1 AND id > $2
        ORDER BY id ASC
@@ -90,7 +97,7 @@ router.post('/:channel/messages', async (req: Request, res: Response) => {
     const result = await query(
       `INSERT INTO chat_messages (channel, author_name, password, content)
        VALUES ($1, $2, $3, $4)
-       RETURNING id, channel, author_name, content, created_at`,
+       RETURNING id, channel, author_name, content, is_edited, original_content, is_deleted, created_at`,
       [channel, author_name.trim(), password, content.trim()]
     )
 
@@ -101,7 +108,52 @@ router.post('/:channel/messages', async (req: Request, res: Response) => {
   }
 })
 
-// 메시지 삭제 (비밀번호 확인)
+// 메시지 수정 (관리자 전용)
+router.put('/messages/:id', async (req: Request, res: Response) => {
+  try {
+    const msgId = parseInt(req.params.id, 10)
+    if (!msgId || isNaN(msgId)) {
+      return res.status(400).json({ error: '유효하지 않은 메시지 ID입니다.' })
+    }
+
+    const { author_name, password, new_content } = req.body
+    if (!isAdmin(password)) {
+      return res.status(403).json({ error: '관리자만 메시지를 수정할 수 있습니다.' })
+    }
+
+    if (!new_content?.trim()) {
+      return res.status(400).json({ error: '수정할 내용을 입력해주세요.' })
+    }
+
+    const msgs = await query(`SELECT content, is_deleted FROM chat_messages WHERE id = $1`, [msgId])
+    if (msgs.length === 0) {
+      return res.status(404).json({ error: '메시지를 찾을 수 없습니다.' })
+    }
+    if (msgs[0].is_deleted) {
+      return res.status(400).json({ error: '이미 삭제된 메시지는 수정할 수 없습니다.' })
+    }
+
+    const currentContent = msgs[0].content
+
+    // 원래 메시지가 아직 저장되지 않았다면, 첫 번째 수정 시 현재 내용을 original_content로 저장
+    const result = await query(
+      `UPDATE chat_messages 
+       SET content = $1, 
+           is_edited = TRUE, 
+           original_content = COALESCE(original_content, $2)
+       WHERE id = $3
+       RETURNING id, channel, author_name, content, is_edited, original_content, is_deleted, created_at`,
+      [new_content.trim(), currentContent, msgId]
+    )
+
+    res.json({ success: true, data: result[0] })
+  } catch (error) {
+    console.error('❌ 메시지 수정 오류:', error)
+    res.status(500).json({ error: '메시지를 수정할 수 없습니다.' })
+  }
+})
+
+// 메시지 삭제 (관리자 전용, 논리적 삭제)
 router.delete('/messages/:id', async (req: Request, res: Response) => {
   try {
     const msgId = parseInt(req.params.id, 10)
@@ -109,20 +161,20 @@ router.delete('/messages/:id', async (req: Request, res: Response) => {
       return res.status(400).json({ error: '유효하지 않은 메시지 ID입니다.' })
     }
 
-    const { password } = req.body
-    if (!password) {
-      return res.status(400).json({ error: '비밀번호를 입력해주세요.' })
+    const { author_name, password } = req.body
+    if (!isAdmin(password)) {
+      return res.status(403).json({ error: '관리자만 메시지를 삭제할 수 있습니다.' })
     }
 
-    const msgs = await query(`SELECT password FROM chat_messages WHERE id = $1`, [msgId])
+    const msgs = await query(`SELECT id FROM chat_messages WHERE id = $1`, [msgId])
     if (msgs.length === 0) {
       return res.status(404).json({ error: '메시지를 찾을 수 없습니다.' })
     }
-    if (msgs[0].password !== password) {
-      return res.status(403).json({ error: '비밀번호가 일치하지 않습니다.' })
-    }
 
-    await query(`DELETE FROM chat_messages WHERE id = $1`, [msgId])
+    await query(
+      `UPDATE chat_messages SET is_deleted = TRUE, content = '삭제된 메시지입니다.', original_content = NULL WHERE id = $1`, 
+      [msgId]
+    )
     res.json({ success: true })
   } catch (error) {
     console.error('❌ 메시지 삭제 오류:', error)
@@ -148,4 +200,3 @@ router.get('/channels/list', async (_req: Request, res: Response) => {
 })
 
 export default router
-

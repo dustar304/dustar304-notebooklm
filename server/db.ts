@@ -80,6 +80,9 @@ export async function initBoardTables() {
         author_name VARCHAR(50) NOT NULL,
         password VARCHAR(100) NOT NULL,
         content TEXT NOT NULL,
+        is_edited BOOLEAN DEFAULT FALSE,
+        original_content TEXT,
+        is_deleted BOOLEAN DEFAULT FALSE,
         created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
       );
     `)

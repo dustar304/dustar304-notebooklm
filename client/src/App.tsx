@@ -21,7 +21,9 @@ const VideoMaker = lazy(() => import('./pages/VideoMaker'))
 const SmartDashboard = lazy(() => import('./pages/SmartDashboard'))
 const WorkResult = lazy(() => import('./pages/WorkResult'))
 const VisionInspection = lazy(() => import('./pages/VisionInspection'))
+const VisionSetupPage = lazy(() => import('./pages/VisionSetup'))
 const ItemMaster = lazy(() => import('./pages/ItemMaster'))
+const DefectTypeMaster = lazy(() => import('./pages/DefectTypeMaster'))
 
 const VALID_PATHS = [
   '/',
@@ -36,14 +38,16 @@ const VALID_PATHS = [
   '/sf-dashboard',
   '/sf-production',
   '/sf-vision',
+  '/sf-vision-setup',
   '/sf-items',
+  '/sf-defect-types',
 ]
 
 function isValidPath(path: string) {
   return VALID_PATHS.includes(path)
 }
 
-const SF_PATHS = ['/sf-dashboard', '/sf-production', '/sf-vision', '/sf-items']
+const SF_PATHS = ['/sf-dashboard', '/sf-production', '/sf-vision', '/sf-vision-setup', '/sf-items', '/sf-defect-types']
 
 /**
  * 스마트팩토리 페이지 로딩 스피너
@@ -74,7 +78,9 @@ function PageManager() {
   const [sfDashboardLoaded, setSfDashboardLoaded] = useState(false)
   const [sfProductionLoaded, setSfProductionLoaded] = useState(false)
   const [sfVisionLoaded, setSfVisionLoaded] = useState(false)
+  const [sfVisionSetupLoaded, setSfVisionSetupLoaded] = useState(false)
   const [sfItemsLoaded, setSfItemsLoaded] = useState(false)
+  const [sfDefectTypesLoaded, setSfDefectTypesLoaded] = useState(false)
 
   useEffect(() => {
     if (path === '/video-maker') setVideoMakerLoaded(true)
@@ -82,7 +88,9 @@ function PageManager() {
     if (path === '/sf-dashboard') setSfDashboardLoaded(true)
     if (path === '/sf-production') setSfProductionLoaded(true)
     if (path === '/sf-vision') setSfVisionLoaded(true)
+    if (path === '/sf-vision-setup') setSfVisionSetupLoaded(true)
     if (path === '/sf-items') setSfItemsLoaded(true)
+    if (path === '/sf-defect-types') setSfDefectTypesLoaded(true)
   }, [path])
 
   // 유효하지 않은 경로 → 홈으로 리다이렉트
@@ -168,10 +176,26 @@ function PageManager() {
         </div>
       )}
 
+      {sfVisionSetupLoaded && (
+        <div className="flex-1 flex-col min-h-0 overflow-hidden" style={{ display: path === '/sf-vision-setup' ? 'flex' : 'none' }}>
+          <Suspense fallback={<SFLoading />}>
+            <VisionSetupPage />
+          </Suspense>
+        </div>
+      )}
+
       {sfItemsLoaded && (
         <div className="flex-1 flex-col min-h-0 overflow-hidden" style={{ display: path === '/sf-items' ? 'flex' : 'none' }}>
           <Suspense fallback={<SFLoading />}>
             <ItemMaster />
+          </Suspense>
+        </div>
+      )}
+
+      {sfDefectTypesLoaded && (
+        <div className="flex-1 flex-col min-h-0 overflow-hidden" style={{ display: path === '/sf-defect-types' ? 'flex' : 'none' }}>
+          <Suspense fallback={<SFLoading />}>
+            <DefectTypeMaster />
           </Suspense>
         </div>
       )}
