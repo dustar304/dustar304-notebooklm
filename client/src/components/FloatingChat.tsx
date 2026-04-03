@@ -170,7 +170,7 @@ const FloatingChat: React.FC = () => {
 
   // ── 메시지 삭제 ──
   const handleDelete = async (id: number) => {
-    if (!window.confirm('이 메시지를 정말 삭제하시겠습니까?')) return
+    if (!window.confirm('삭제하시겠습니까?')) return
     try {
       const res = await fetch(`/api/chat/messages/${id}`, {
         method: 'DELETE',
@@ -449,18 +449,20 @@ const FloatingChat: React.FC = () => {
                     )}
                   </div>
 
-                  {isAdmin && !msg.is_deleted && (
+                  {(isAdmin || msg.author_name === authorName) && !msg.is_deleted && (
                     <div className="absolute right-1 top-1 opacity-0 group-hover:opacity-100 transition-opacity flex items-center bg-gray-800 rounded shadow-md">
-                      <button
-                        onClick={() => {
-                          setEditTarget(msg.id)
-                          setEditContent(msg.content)
-                        }}
-                        className="p-1.5 text-gray-400 hover:text-blue-400"
-                        title="수정"
-                      >
-                        <Edit2 className="w-3 h-3" />
-                      </button>
+                      {isAdmin && (
+                        <button
+                          onClick={() => {
+                            setEditTarget(msg.id)
+                            setEditContent(msg.content)
+                          }}
+                          className="p-1.5 text-gray-400 hover:text-blue-400"
+                          title="수정"
+                        >
+                          <Edit2 className="w-3 h-3" />
+                        </button>
+                      )}
                       <button
                         onClick={() => handleDelete(msg.id)}
                         className="p-1.5 text-gray-400 hover:text-red-400"

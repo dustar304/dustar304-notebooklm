@@ -162,13 +162,15 @@ router.delete('/messages/:id', async (req: Request, res: Response) => {
     }
 
     const { author_name, password } = req.body
-    if (!isAdmin(password)) {
-      return res.status(403).json({ error: '관리자만 메시지를 삭제할 수 있습니다.' })
-    }
 
-    const msgs = await query(`SELECT id FROM chat_messages WHERE id = $1`, [msgId])
+    const msgs = await query(`SELECT id, author_name, password FROM chat_messages WHERE id = $1`, [msgId])
     if (msgs.length === 0) {
       return res.status(404).json({ error: '메시지를 찾을 수 없습니다.' })
+    }
+
+    const isOwner = msgs[0].author_name === author_name && msgs[0].password === password
+    if (!isAdmin(password) && !isOwner) {
+      return res.status(403).json({ error: '자신이 작성한 메시지나 관리자만 삭제할 수 있습니다.' })
     }
 
     await query(
