@@ -144,7 +144,7 @@ const Home = () => {
       <div className="max-w-none mx-auto">
 
         {/* ── 헤더 ── */}
-        <div className="relative text-center mb-8 sm:mb-12 py-24 sm:py-32 overflow-hidden bg-slate-900 w-full min-h-[600px] flex flex-col justify-center border-b border-slate-200">
+        <div className="relative text-center mb-8 sm:mb-12 py-24 sm:py-32 overflow-hidden bg-slate-900 w-full min-h-[600px] flex flex-col justify-center">
           {/* 동영상 배경 (WebP 캔버스 애니메이션) */}
           <div className="absolute inset-0 z-0 w-full h-full flex items-center justify-center bg-slate-900">
             {!imagesLoaded && (
@@ -155,10 +155,12 @@ const Home = () => {
             )}
             <canvas 
               ref={canvasRef}
-              className={`w-full h-full object-contain opacity-70 mix-blend-screen pointer-events-none transition-opacity duration-1000 ${imagesLoaded ? 'opacity-70' : 'opacity-0'}`}
+              className={`w-full h-full object-cover opacity-70 pointer-events-none transition-opacity duration-1000 ${imagesLoaded ? 'opacity-70' : 'opacity-0'}`}
             />
             {/* 영상 위에 약간의 오버레이 추가 (가독성을 위해) */}
             <div className="absolute inset-0 bg-slate-900/40 pointer-events-none w-full h-full"></div>
+            {/* 자연스러운 연결을 위한 하단 화이트 페이드 아웃 효과 */}
+            <div className="absolute bottom-0 left-0 w-full h-48 bg-gradient-to-t from-slate-50 to-transparent pointer-events-none"></div>
           </div>
 
           <div className="relative z-10 px-4 w-full">
