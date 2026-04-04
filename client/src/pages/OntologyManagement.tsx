@@ -381,58 +381,50 @@ export default function OntologyManagement() {
                   <p className="text-[10px] text-slate-400">월별 전체 테이블 수와 벡터화된 테이블 수를 막대 그래프로 비교 표시합니다. 벡터화 진행률과 추이를 한눈에 확인할 수 있습니다.</p>
                 </div>
                 
-                <div className="flex-1 flex items-end relative min-h-[240px] px-8 py-6">
-                  {/* Y-axis labels */}
-                  <div className="absolute left-0 top-6 bottom-8 flex flex-col justify-between text-[10px] text-slate-400 pr-2 pb-2 h-[calc(100%-3.5rem)]">
-                    <span>100</span>
-                    <span>75</span>
-                    <span>50</span>
-                    <span>25</span>
-                    <span>0</span>
-                  </div>
-                  
-                  {/* Grid lines */}
-                  <div className="absolute left-6 right-36 top-6 bottom-8 flex flex-col justify-between h-[calc(100%-3.5rem)] pointer-events-none">
-                    {[0, 1, 2, 3, 4].map((i) => (
-                      <div key={i} className="w-full h-[1px] bg-slate-100 border-b border-dashed border-slate-200/50"></div>
-                    ))}
+                <div className="flex-1 flex relative min-h-[220px] p-6">
+                  {/* Chart Content Area */}
+                  <div className="flex-1 flex flex-col relative pr-4">
+                    {/* Grid lines & Y-axis labels */}
+                    <div className="absolute inset-y-0 left-0 right-0 flex flex-col justify-between text-[10px] text-slate-400 pb-6">
+                      {[100, 75, 50, 25, 0].map((val, i) => (
+                        <div key={i} className="flex items-center gap-2 w-full">
+                          <span className="w-6 text-right">{val}</span>
+                          <div className="flex-1 h-[1px] bg-slate-100 border-b border-dashed border-slate-200/50"></div>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Bar Chart & X-axis labels */}
+                    <div className="absolute inset-0 left-10 right-0 bottom-6 flex items-end justify-between pt-2 px-2">
+                      {[
+                        [40, 38], [48, 46], [50, 38], [50, 48], [55, 48], [60, 46],
+                        [65, 58], [62, 58], [70, 52], [88, 52], [80, 58], [88, 68]
+                      ].map((val, i) => (
+                        <div key={i} className="flex flex-col items-center h-full justify-end gap-2 flex-1">
+                          <div className="flex gap-1 sm:gap-1.5 h-[calc(100%-10px)] items-end w-full justify-center">
+                            <div className="w-2.5 sm:w-3 bg-emerald-500 rounded-t-sm shadow-sm transition-all duration-300 hover:opacity-80" style={{ height: `${val[0]}%` }}></div>
+                            <div className="w-2.5 sm:w-3 bg-cyan-500 rounded-t-sm shadow-sm transition-all duration-300 hover:opacity-80" style={{ height: `${val[1]}%` }}></div>
+                          </div>
+                          <span className="text-[10px] text-slate-400">{i + 1}월</span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
 
-                  {/* Chart Bar Area */}
-                  <div className="w-[calc(100%-9rem)] h-[calc(100%-3.5rem)] absolute left-6 bottom-8 flex items-end justify-between px-3">
-                    {/* Dummy data for 12 months (Total, Vectorized) */}
-                    {[
-                      [40, 38], [48, 46], [50, 38], [50, 48], [55, 48], [60, 46],
-                      [65, 58], [62, 58], [70, 52], [88, 52], [80, 58], [88, 68]
-                    ].map((val, i) => (
-                      <div key={i} className="flex gap-1.5 h-full items-end pb-[1px]">
-                        <div className="w-3 bg-emerald-500 rounded-t-sm shadow-sm" style={{ height: `${val[0]}%` }}></div>
-                        <div className="w-3 bg-cyan-500 rounded-t-sm shadow-sm" style={{ height: `${val[1]}%` }}></div>
-                      </div>
-                    ))}
-                  </div>
-
-                  {/* X-axis labels */}
-                  <div className="absolute left-6 right-36 bottom-2 flex justify-between text-[10px] text-slate-400 px-4">
-                    <span>1월</span><span>2월</span><span>3월</span><span>4월</span>
-                    <span>5월</span><span>6월</span><span>7월</span><span>8월</span>
-                    <span>9월</span><span>10월</span><span>11월</span><span>12월</span>
-                  </div>
-                  
                   {/* Legend */}
-                  <div className="absolute right-0 top-1/2 -translate-y-1/2 flex flex-col gap-5 pl-5 border-l border-slate-100">
+                  <div className="flex flex-col gap-5 pl-5 border-l border-slate-100 w-32 justify-center">
                     <div className="flex items-start gap-2.5">
-                      <div className="w-3.5 h-3.5 bg-emerald-500 mt-0.5 shrink-0 rounded-sm shadow-sm"></div>
+                      <div className="w-3 h-3 bg-emerald-500 mt-0.5 shrink-0 rounded-sm shadow-sm"></div>
                       <div className="flex flex-col">
                         <span className="text-[11px] font-bold text-slate-700">전체 테이블</span>
-                        <span className="text-[9px] text-slate-400">데이터베이스의 전체 테이블 수</span>
+                        <span className="text-[9px] text-slate-400 leading-tight mt-0.5">데이터베이스의 전체 테이블 수</span>
                       </div>
                     </div>
                     <div className="flex items-start gap-2.5">
-                      <div className="w-3.5 h-3.5 bg-cyan-500 mt-0.5 shrink-0 rounded-sm shadow-sm"></div>
+                      <div className="w-3 h-3 bg-cyan-500 mt-0.5 shrink-0 rounded-sm shadow-sm"></div>
                       <div className="flex flex-col">
                         <span className="text-[11px] font-bold text-slate-700">벡터화됨</span>
-                        <span className="text-[9px] text-slate-400">AI 검색 가능한 테이블 수</span>
+                        <span className="text-[9px] text-slate-400 leading-tight mt-0.5">AI 검색 가능한 테이블 수</span>
                       </div>
                     </div>
                   </div>
@@ -449,78 +441,79 @@ export default function OntologyManagement() {
                   <p className="text-[10px] text-slate-400">월별 테이블 수와 관계 수의 변화를 영역 차트로 표시합니다. 데이터베이스의 성장 패턴과 관계 형성 추이를 시각적으로 확인할 수 있습니다.</p>
                 </div>
                 
-                <div className="flex-1 flex items-end relative min-h-[240px] px-8 py-6">
-                  {/* Y-axis labels */}
-                  <div className="absolute left-0 top-6 bottom-8 flex flex-col justify-between text-[10px] text-slate-400 pr-2 pb-2 h-[calc(100%-3.5rem)]">
-                    <span>120</span>
-                    <span>90</span>
-                    <span>60</span>
-                    <span>30</span>
-                    <span>0</span>
-                  </div>
-                  
-                  {/* Grid lines */}
-                  <div className="absolute left-6 right-36 top-6 bottom-8 flex flex-col justify-between h-[calc(100%-3.5rem)] pointer-events-none">
-                    {[0, 1, 2, 3, 4].map((i) => (
-                      <div key={i} className="w-full h-[1px] bg-slate-100 border-b border-dashed border-slate-200/50"></div>
-                    ))}
-                  </div>
+                <div className="flex-1 flex relative min-h-[220px] p-6">
+                  {/* Chart Content Area */}
+                  <div className="flex-1 flex flex-col relative pr-4">
+                    {/* Grid lines & Y-axis labels */}
+                    <div className="absolute inset-y-0 left-0 right-0 flex flex-col justify-between text-[10px] text-slate-400 pb-6">
+                      {[120, 90, 60, 30, 0].map((val, i) => (
+                        <div key={i} className="flex items-center gap-2 w-full">
+                          <span className="w-6 text-right">{val}</span>
+                          <div className="flex-1 h-[1px] bg-slate-100 border-b border-dashed border-slate-200/50"></div>
+                        </div>
+                      ))}
+                    </div>
 
-                  {/* Chart SVG Area */}
-                  <svg className="w-[calc(100%-9rem)] h-[calc(100%-3.5rem)] absolute left-6 bottom-8 overflow-visible" preserveAspectRatio="none">
-                    <defs>
-                      <linearGradient id="gradientTable" x1="0%" y1="0%" x2="0%" y2="100%">
-                        <stop offset="0%" stopColor="#a855f7" stopOpacity="0.45" />
-                        <stop offset="100%" stopColor="#a855f7" stopOpacity="0.05" />
-                      </linearGradient>
-                      <linearGradient id="gradientRelation" x1="0%" y1="0%" x2="0%" y2="100%">
-                        <stop offset="0%" stopColor="#f59e0b" stopOpacity="0.7" />
-                        <stop offset="100%" stopColor="#f59e0b" stopOpacity="0.15" />
-                      </linearGradient>
-                    </defs>
+                    {/* Area Chart SVG & X-axis labels */}
+                    <div className="absolute inset-0 left-10 right-0 bottom-6 pt-2">
+                      <svg className="w-full h-full overflow-visible" preserveAspectRatio="none">
+                        <defs>
+                          <linearGradient id="gradientTable2" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" stopColor="#a855f7" stopOpacity="0.45" />
+                            <stop offset="100%" stopColor="#a855f7" stopOpacity="0.05" />
+                          </linearGradient>
+                          <linearGradient id="gradientRelation2" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" stopColor="#f59e0b" stopOpacity="0.7" />
+                            <stop offset="100%" stopColor="#f59e0b" stopOpacity="0.15" />
+                          </linearGradient>
+                        </defs>
 
-                    {/* 관계 수 (주황색 영역) */}
-                    <polygon 
-                      points="0,220 0,110 35,110 70,105 105,40 140,25 175,35 210,15 245,45 280,18 315,18 350,22 385,22 385,220" 
-                      fill="url(#gradientRelation)" 
-                    />
-                    <polyline 
-                      points="0,110 35,110 70,105 105,40 140,25 175,35 210,15 245,45 280,18 315,18 350,22 385,22" 
-                      fill="none" stroke="#f59e0b" strokeWidth="2.5" 
-                    />
+                        {/* Scaling logic: width=0~110, height=0~100 for easy plotting. */}
+                        <svg viewBox="0 0 110 100" preserveAspectRatio="none" className="w-full h-full overflow-visible">
+                          {/* 관계 수 (주황색) */}
+                          <polygon 
+                            points="0,100 0,50 10,50 20,48 30,18 40,11 50,16 60,7 70,20 80,7 90,7 100,9 110,9 110,100" 
+                            fill="url(#gradientRelation2)" 
+                          />
+                          <polyline 
+                            points="0,50 10,50 20,48 30,18 40,11 50,16 60,7 70,20 80,7 90,7 100,9 110,9" 
+                            fill="none" stroke="#f59e0b" strokeWidth="1" vectorEffect="non-scaling-stroke"
+                          />
 
-                    {/* 테이블 수 (보라색 영역) */}
-                    <polygon 
-                      points="0,220 0,165 35,150 70,145 105,140 140,125 175,120 210,115 245,120 280,95 315,100 350,110 385,105 385,220" 
-                      fill="url(#gradientTable)" 
-                    />
-                    <polyline 
-                      points="0,165 35,150 70,145 105,140 140,125 175,120 210,115 245,120 280,95 315,100 350,110 385,105" 
-                      fill="none" stroke="#a855f7" strokeWidth="2.5" 
-                    />
-                  </svg>
+                          {/* 테이블 수 (보라색) */}
+                          <polygon 
+                            points="0,100 0,75 10,68 20,66 30,63 40,56 50,54 60,52 70,54 80,43 90,45 100,50 110,47 110,100" 
+                            fill="url(#gradientTable2)" 
+                          />
+                          <polyline 
+                            points="0,75 10,68 20,66 30,63 40,56 50,54 60,52 70,54 80,43 90,45 100,50 110,47" 
+                            fill="none" stroke="#a855f7" strokeWidth="1" vectorEffect="non-scaling-stroke"
+                          />
+                        </svg>
+                      </svg>
+                    </div>
 
-                  {/* X-axis labels */}
-                  <div className="absolute left-6 right-36 bottom-2 flex justify-between text-[10px] text-slate-400">
-                    <span>1월</span><span>2월</span><span>3월</span><span>4월</span>
-                    <span>5월</span><span>6월</span><span>7월</span><span>8월</span>
-                    <span>9월</span><span>10월</span><span>11월</span><span>12월</span>
+                    <div className="absolute left-10 right-0 bottom-0 flex justify-between text-[10px] text-slate-400 px-[2%]">
+                      <span>1월</span><span>2월</span><span>3월</span><span>4월</span>
+                      <span>5월</span><span>6월</span><span>7월</span><span>8월</span>
+                      <span>9월</span><span>10월</span><span>11월</span><span>12월</span>
+                    </div>
                   </div>
                   
                   {/* Legend */}
-                  <div className="absolute right-0 top-1/2 -translate-y-1/2 flex flex-col gap-5 pl-5 border-l border-slate-100">
+                  <div className="flex flex-col gap-5 pl-5 border-l border-slate-100 w-32 justify-center">
                     <div className="flex items-start gap-2.5">
-                      <div className="w-3.5 h-3.5 bg-purple-500 mt-0.5 shrink-0 rounded-sm shadow-sm"></div>
+                      <div className="w-3 h-3 bg-purple-500 mt-0.5 shrink-0 rounded-sm shadow-sm"></div>
                       <div className="flex flex-col">
                         <span className="text-[11px] font-bold text-slate-700">테이블 수</span>
-                        <span className="text-[9px] text-slate-400">월별 전체 테이블 수 변화</span>
+                        <span className="text-[9px] text-slate-400 leading-tight mt-0.5">월별 전체 테이블 수 변화</span>
                       </div>
                     </div>
                     <div className="flex items-start gap-2.5">
-                      <div className="w-3.5 h-3.5 bg-amber-500 mt-0.5 shrink-0 rounded-sm shadow-sm"></div>
+                      <div className="w-3 h-3 bg-amber-500 mt-0.5 shrink-0 rounded-sm shadow-sm"></div>
                       <div className="flex flex-col">
                         <span className="text-[11px] font-bold text-slate-700">관계 수</span>
-                        <span className="text-[9px] text-slate-400">월별 발견된 관계 수</span>
+                        <span className="text-[9px] text-slate-400 leading-tight mt-0.5">월별 발견된 관계 수</span>
                       </div>
                     </div>
                   </div>
