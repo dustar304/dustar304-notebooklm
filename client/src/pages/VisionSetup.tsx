@@ -167,10 +167,10 @@ export default function VisionSetupPage() {
         </div>
 
           {/* 탭 헤더 영역 추가 */}
-          <div className="flex gap-1 px-2 mt-2 relative z-20">
+          <div className="flex gap-1 px-2 mt-2 relative z-20 overflow-x-auto shrink-0 pb-[1px]">
             <button 
               onClick={() => setActiveTab('software')}
-              className={`flex items-center gap-2 px-4 py-2.5 text-sm font-bold border rounded-t-xl transition-colors ${activeTab === 'software' ? 'bg-white text-purple-700 border-purple-200 border-b-white shadow-[0_-2px_10px_-4px_rgba(168,85,247,0.2)] z-10' : 'bg-slate-200/50 text-slate-500 border-transparent border-b-transparent hover:bg-slate-300/50'}`}
+              className={`flex items-center whitespace-nowrap gap-2 px-4 py-2.5 text-sm font-bold border rounded-t-xl transition-colors ${activeTab === 'software' ? 'bg-white text-purple-700 border-purple-200 border-b-white shadow-[0_-2px_10px_-4px_rgba(168,85,247,0.2)] z-10' : 'bg-slate-200/50 text-slate-500 border-transparent border-b-transparent hover:bg-slate-300/50'}`}
               style={{ marginBottom: activeTab === 'software' ? '-1px' : '0' }}
             >
               <Camera className="w-4 h-4" />
@@ -178,7 +178,7 @@ export default function VisionSetupPage() {
             </button>
             <button 
               onClick={() => setActiveTab('hardware')}
-              className={`flex items-center gap-2 px-4 py-2.5 text-sm font-bold border rounded-t-xl transition-colors ${activeTab === 'hardware' ? 'bg-white text-purple-700 border-purple-200 border-b-white shadow-[0_-2px_10px_-4px_rgba(168,85,247,0.2)] z-10' : 'bg-slate-200/50 text-slate-500 border-transparent border-b-transparent hover:bg-slate-300/50'}`}
+              className={`flex items-center whitespace-nowrap gap-2 px-4 py-2.5 text-sm font-bold border rounded-t-xl transition-colors ${activeTab === 'hardware' ? 'bg-white text-indigo-600 border-indigo-200 border-b-white shadow-[0_-2px_10px_-4px_rgba(79,70,229,0.2)] z-10' : 'bg-slate-200/50 text-slate-500 border-transparent border-b-transparent hover:bg-slate-300/50'}`}
               style={{ marginBottom: activeTab === 'hardware' ? '-1px' : '0' }}
             >
               <div className="flex flex-col gap-[3px] mt-0.5">
@@ -192,6 +192,16 @@ export default function VisionSetupPage() {
                 </div>
               </div>
               비전 매트릭스 (하드웨어 연동)
+            </button>
+            <button 
+              onClick={() => setActiveTab('vieworks')}
+              className={`flex items-center whitespace-nowrap gap-2 px-4 py-2.5 text-sm font-bold border rounded-t-xl transition-colors ${activeTab === 'vieworks' ? 'bg-white text-[#d946ef] border-[#e879f9] border-b-white shadow-[0_-2px_10px_-4px_rgba(217,70,239,0.2)] z-10' : 'bg-slate-200/50 text-slate-500 border-transparent border-b-transparent hover:bg-slate-300/50'}`}
+              style={{ marginBottom: activeTab === 'vieworks' ? '-1px' : '0' }}
+            >
+              <div className="w-4 h-4 border-[2px] border-current rounded-sm flex items-center justify-center">
+                <div className="w-1.5 h-1.5 bg-current rounded-sm"></div>
+              </div>
+              머신 비전 (뷰웍스 연동)
             </button>
           </div>
 
@@ -520,6 +530,101 @@ export default function VisionSetupPage() {
 
                         <button className="w-full py-3 bg-[#4f46e5] hover:bg-[#4338ca] text-white font-bold rounded-lg shadow-sm transition-colors flex items-center justify-center gap-2">
                           <Save className="w-4 h-4" /> 하드웨어 연동 설정 저장
+                        </button>
+                      </div>
+                  </div>
+                </div>
+                {/* 뷰웍스 연동 탭 (새로 추가됨) */}
+              </div>
+            )}
+            {activeTab === 'vieworks' && (
+              <div className="flex flex-col lg:flex-row gap-6 flex-1 h-full w-full bg-[#f8f9fc] border border-[#fdf4ff] shadow-[0_2px_10px_-4px_rgba(217,70,239,0.2)] rounded-xl rounded-tl-none -mt-[1px] p-6 overflow-hidden relative z-10">
+                {/* 하드웨어 연동 좌측 (장비 통신 설정) */}
+                <div className="flex-1 bg-white border border-slate-200 shadow-sm rounded-xl p-6 flex flex-col h-full overflow-y-auto min-w-[300px] xl:max-w-none">
+                  <div className="flex items-center gap-2 mb-6 border-b border-slate-100 pb-3">
+                    <div className="w-5 h-5 border-[2px] border-[#d946ef] rounded-sm flex items-center justify-center">
+                      <div className="w-2 h-2 bg-[#d946ef] rounded-sm"></div>
+                    </div>
+                    <h3 className="font-bold text-slate-800 text-[15px]">장비 통신 설정 (TCP/IP & API)</h3>
+                  </div>
+                  
+                    <div className="flex-1 flex flex-col space-y-4">
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <label className={labelCls}>장비 IP 주소</label>
+                          <input type="text" className={`${inputCls} w-full bg-slate-50 border-slate-200`} defaultValue="192.168.1.100" />
+                        </div>
+                        <div>
+                          <label className={labelCls}>포트 (Port)</label>
+                          <input type="text" className={`${inputCls} w-full bg-slate-50 border-slate-200`} defaultValue="5000" />
+                        </div>
+                      </div>
+                      
+                      <div>
+                        <label className={labelCls}>통신 프로토콜</label>
+                        <select className={`${inputCls} w-full appearance-none bg-slate-50 border-slate-200`} style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%239ca3af'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`, backgroundPosition: `right 0.5rem center`, backgroundRepeat: `no-repeat`, backgroundSize: `1em 1em` }}>
+                          <option>TCP/IP Socket</option>
+                          <option>HTTP REST API</option>
+                          <option>Modbus TCP</option>
+                        </select>
+                      </div>
+                      
+                      <div>
+                        <label className={labelCls}>장비 식별자 (Equipment ID)</label>
+                        <input type="text" className={`${inputCls} w-full bg-slate-50 border-slate-200`} defaultValue="VSN-MATRIX-001" />
+                      </div>
+                      
+                      <div className="mt-auto pt-4 border-t border-slate-100">
+                        <button className="w-full py-2.5 border border-slate-200 text-slate-500 font-bold rounded-lg hover:bg-slate-50 transition-colors flex items-center justify-center gap-2 shadow-sm">
+                          <Search className="w-4 h-4" /> 연결 테스트 (Ping)
+                        </button>
+                      </div>
+                    </div>
+                </div>
+
+                {/* 하드웨어 연동 우측 (검사 데이터 매핑 설정) */}
+                <div className="w-[450px] xl:w-[500px] shrink-0 bg-white border border-slate-200 shadow-sm rounded-xl p-6 flex flex-col h-full overflow-y-auto">
+                  <div className="flex items-center gap-2 mb-6 border-b border-slate-100 pb-3">
+                    <Settings className="w-5 h-5 text-slate-500" />
+                    <h3 className="font-bold text-slate-800 text-[15px]">검사 데이터 매핑 설정</h3>
+                  </div>
+                  
+                  <div className="flex-1 flex flex-col justify-between space-y-4">
+                    <div className="space-y-4">
+                      <div>
+                        <label className={labelCls}>검사 부서</label>
+                        <div className="relative">
+                          <input type="text" className={`${inputCls} w-full pr-9 bg-slate-50`} placeholder="부서 선택" />
+                          <div className="absolute right-0 top-0 h-9 w-9 flex items-center justify-center border-l border-slate-200 bg-slate-100 rounded-r-md cursor-pointer hover:bg-slate-200 transition-colors">
+                            <Search className="w-3.5 h-3.5 text-slate-500" />
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div>
+                        <label className={labelCls}>대상 품목</label>
+                        <div className="relative">
+                          <input type="text" className={`${inputCls} w-full pr-9 bg-slate-50`} placeholder="품목 선택" />
+                          <div className="absolute right-0 top-0 h-9 w-9 flex items-center justify-center border-l border-slate-200 bg-slate-100 rounded-r-md cursor-pointer hover:bg-slate-200 transition-colors">
+                            <Search className="w-3.5 h-3.5 text-slate-500" />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    
+                      <div className="mt-auto pt-4 border-t border-slate-100">
+                        <div className="bg-[#eff6ff] border border-[#bfdbfe] rounded-lg p-4 text-[12px] text-[#1e40af] mb-4 relative shadow-sm">
+                          <div className="flex items-center gap-1.5 font-bold mb-2 text-[#1d4ed8]">
+                            <AlertCircle className="w-4 h-4" /> 데이터 수신 안내
+                          </div>
+                          <p className="leading-relaxed text-[#1e40af] mb-1.5 break-keep opacity-90">
+                            비전 매트릭스 장비에서 불량 판정 시 ERP 내부 API 엔드포인트 <code className="bg-[#dbeafe] px-1 py-0.5 rounded text-[#1d4ed8] font-mono text-[11px] mx-0.5 border border-[#bfdbfe]">/api/vision/hardware</code> 로 판정 결과를 전송하도록 설정하십시오.
+                          </p>
+                          <p className="mt-2 text-[#1e40af] font-medium opacity-90">필수 수신 데이터: 장비 ID, 판정 결과(OK/NG), 불량 코드, 이미지 저장 경로</p>
+                        </div>
+
+                        <button className="w-full py-3 bg-[#6366f1] hover:bg-[#4f46e5] text-white font-bold rounded-lg shadow-sm transition-colors flex items-center justify-center gap-2">
+                          <Save className="w-4 h-4" /> 하드웨어 연동 설정 저장 (VIS7 SDK)
                         </button>
                       </div>
                   </div>
