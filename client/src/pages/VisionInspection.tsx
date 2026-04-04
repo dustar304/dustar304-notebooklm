@@ -23,6 +23,9 @@ export default function VisionInspectionPage() {
   const [activeTab, setActiveTab] = useState<'software' | 'hardware'>('software');
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [isLive, setIsLive] = useState(false);
+  const [isHwConnected, setIsHwConnected] = useState(false);
+  const [hwOkCount, setHwOkCount] = useState(0);
+  const [hwNgCount, setHwNgCount] = useState(0);
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
@@ -80,6 +83,17 @@ export default function VisionInspectionPage() {
     }
     if (videoRef.current) videoRef.current.srcObject = null;
     setIsLive(false);
+  };
+
+  const toggleHwConnection = () => {
+    setIsHwConnected(!isHwConnected);
+    if (!isHwConnected) {
+      setHwOkCount(1);
+      setHwNgCount(1);
+    } else {
+      setHwOkCount(0);
+      setHwNgCount(0);
+    }
   };
 
   useEffect(() => {
@@ -475,9 +489,9 @@ export default function VisionInspectionPage() {
               {/* Left Panel: Vision Matrix Screen & Raw Data */}
               <div className="flex-[2] flex flex-col gap-4 min-w-0">
                 {/* Vision Matrix Screen */}
-                <div className="flex-1 bg-[#0f172a] rounded-xl border border-slate-800 shadow-inner flex flex-col overflow-hidden min-h-[350px]">
+                <div className="flex-1 bg-[#0f172a] rounded-xl border border-slate-800 shadow-inner flex flex-col overflow-hidden min-h-[350px] relative">
                   {/* Top Bar */}
-                  <div className="flex justify-between items-center px-4 py-3 border-b border-slate-800/50 bg-[#1e293b]/50">
+                  <div className="flex justify-between items-center px-4 py-3 border-b border-slate-800/50 bg-[#1e293b]/50 z-10 relative">
                     <div className="flex items-center gap-3">
                       <div className="flex flex-col gap-[3px] text-fuchsia-400">
                         <div className="flex gap-[3px]">
@@ -491,31 +505,70 @@ export default function VisionInspectionPage() {
                       </div>
                       <div>
                         <h3 className="text-white font-bold text-sm tracking-wide">VIEWORKS HIGH-RES CAMERA</h3>
-                        <p className="text-slate-500 text-[10px] font-semibold mt-0.5 font-mono">Waiting for Edge Application connection...</p>
+                        <p className={`text-[10px] font-semibold mt-0.5 font-mono ${isHwConnected ? 'text-slate-400' : 'text-slate-500'}`}>
+                          {isHwConnected ? 'Receiving real-time optical feed via VIS7 SDK Middleware...' : 'Waiting for Edge Application connection...'}
+                        </p>
                       </div>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <div className="w-2 h-2 rounded-full bg-slate-500"></div>
-                      <span className="text-slate-400 text-xs font-bold tracking-widest">OFFLINE</span>
-                    </div>
+                    {isHwConnected ? (
+                      <div className="flex flex-col items-end">
+                        <div className="flex items-center gap-2 mb-1">
+                          <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+                          <span className="text-emerald-500 text-xs font-bold tracking-widest">VIS7 SDK CONNECTED</span>
+                        </div>
+                        <div className="text-right text-[10px] text-slate-400 font-mono leading-tight">
+                          Resolution: 6576 x 4384 (29MP)<br/>
+                          FPS: 4.2 / Interface: CoaXPress
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-2">
+                        <div className="w-2 h-2 rounded-full bg-slate-500"></div>
+                        <span className="text-slate-400 text-xs font-bold tracking-widest">OFFLINE</span>
+                      </div>
+                    )}
                   </div>
                   
                   {/* Center content */}
-                  <div className="flex-1 flex flex-col items-center justify-center text-slate-500 gap-4">
-                    <div className="flex flex-col gap-[4px] text-slate-600/50">
-                      <div className="flex gap-[4px]">
-                        <div className="w-[20px] h-[20px] border-[4px] border-current rounded-md"></div>
-                        <div className="w-[40px] h-[20px] border-[4px] border-current rounded-md"></div>
+                  <div className="flex-1 flex flex-col items-center justify-center text-slate-500 gap-4 relative z-0">
+                    {isHwConnected ? (
+                      <div className="absolute inset-0 flex items-center justify-center p-8 bg-[#020617]">
+                         <div className="relative bg-white w-full max-w-2xl aspect-[16/9] flex items-center justify-center">
+                            <div className="absolute w-[50%] h-[60%] border-[3px] border-emerald-400">
+                              <div className="absolute top-0 left-0 w-6 h-6 border-t-[5px] border-l-[5px] border-emerald-400 -mt-[4px] -ml-[4px]"></div>
+                              <div className="absolute top-0 right-0 w-6 h-6 border-t-[5px] border-r-[5px] border-emerald-400 -mt-[4px] -mr-[4px]"></div>
+                              <div className="absolute bottom-0 left-0 w-6 h-6 border-b-[5px] border-l-[5px] border-emerald-400 -mb-[4px] -ml-[4px]"></div>
+                              <div className="absolute bottom-0 right-0 w-6 h-6 border-b-[5px] border-r-[5px] border-emerald-400 -mb-[4px] -mr-[4px]"></div>
+                            </div>
+                            <div className="absolute w-16 h-16 border-4 border-emerald-400/20 rounded-xl flex items-center justify-center">
+                               <div className="w-2 h-2 bg-emerald-400/40"></div>
+                            </div>
+                            <span className="text-rose-700 text-2xl md:text-3xl font-medium tracking-wide z-10 whitespace-nowrap drop-shadow-sm">HARDWARE POSITIVE DETECTION</span>
+                         </div>
+                         <div className="absolute bottom-6 right-6 bg-black border border-slate-800 rounded p-3 flex flex-col items-end font-mono">
+                           <span className="text-[10px] text-slate-500 mb-1">PRECISION MEASUREMENT</span>
+                           <span className="text-emerald-500 text-xl font-bold">10.150 <span className="text-sm font-normal text-emerald-600">mm</span></span>
+                           <span className="text-rose-500 text-[10px] mt-1">Tol: ±0.050 mm</span>
+                         </div>
                       </div>
-                      <div className="flex gap-[4px]">
-                        <div className="w-[40px] h-[20px] border-[4px] border-current rounded-md"></div>
-                        <div className="w-[20px] h-[20px] border-[4px] border-current rounded-md"></div>
-                      </div>
-                    </div>
-                    <div className="text-center">
-                      <p className="text-sm font-medium mb-1">엣지 브릿지(Python) 애플리케이션 연결이 필요합니다.</p>
-                      <p className="text-[11px] text-slate-600">현장 PC에서 Vieworks VIS7 SDK를 구동하여 획득한 이미지를<br/>ERP 서버 API로 스트리밍하십시오.</p>
-                    </div>
+                    ) : (
+                      <>
+                        <div className="flex flex-col gap-[4px] text-slate-600/50">
+                          <div className="flex gap-[4px]">
+                            <div className="w-[20px] h-[20px] border-[4px] border-current rounded-md"></div>
+                            <div className="w-[40px] h-[20px] border-[4px] border-current rounded-md"></div>
+                          </div>
+                          <div className="flex gap-[4px]">
+                            <div className="w-[40px] h-[20px] border-[4px] border-current rounded-md"></div>
+                            <div className="w-[20px] h-[20px] border-[4px] border-current rounded-md"></div>
+                          </div>
+                        </div>
+                        <div className="text-center">
+                          <p className="text-sm font-medium mb-1">엣지 브릿지(Python) 애플리케이션 연결이 필요합니다.</p>
+                          <p className="text-[11px] text-slate-600">현장 PC에서 Vieworks VIS7 SDK를 구동하여 획득한 이미지를<br/>ERP 서버 API로 스트리밍하십시오.</p>
+                        </div>
+                      </>
+                    )}
                   </div>
                 </div>
                 
@@ -528,8 +581,17 @@ export default function VisionInspectionPage() {
                     </div>
                     <span className="text-[10px] text-slate-500 font-mono">Port : 5000</span>
                   </div>
-                  <div className="flex-1 p-4 flex flex-col text-slate-500 text-xs justify-center items-center font-mono">
-                    데이터 대기 중...
+                  <div className="flex-1 p-3 flex flex-col text-slate-400 text-[11px] font-mono overflow-y-auto bg-[#020617] leading-relaxed">
+                    {isHwConnected ? (
+                      <>
+                        <div className="text-cyan-500">{`> [오전 11:52:18] 통신 에러 발생 (백엔드 소켓 서버 미연결)`}</div>
+                        <div className="text-cyan-500">{`> [오전 11:52:18] 장비 연결이 종료되었습니다.`}</div>
+                        <div className="text-cyan-500">{`> [오전 11:52:22] 수신: {"type":"OK", "timestamp":1775271142158}`}</div>
+                        <div className="text-rose-500">{`> [오전 11:52:42] 수신: {"type":"NG", "label":"표면 미세 스크래치(HW)", "score":97.4, "code":"HW_ERR_001"}`}</div>
+                      </>
+                    ) : (
+                      <div className="flex-1 flex items-center justify-center text-slate-500">데이터 대기 중...</div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -550,7 +612,7 @@ export default function VisionInspectionPage() {
                       </button>
                       <button className="flex items-center gap-1.5 px-2 py-1.5 rounded text-fuchsia-600 hover:bg-fuchsia-50 border border-fuchsia-200 transition-colors text-[11px] font-semibold">
                         <UploadCloud className="w-3.5 h-3.5" />
-                        검사요청등록 (0)
+                        검사요청등록 ({isHwConnected ? 1 : 0})
                       </button>
                     </div>
                   </div>
@@ -558,26 +620,47 @@ export default function VisionInspectionPage() {
                   <div className="grid grid-cols-2 gap-3 mb-4">
                     <div className="bg-slate-50/50 border border-slate-100 rounded-lg p-3 text-center">
                       <p className="text-[11px] text-slate-500 font-bold mb-1">수신된 정상 (OK)</p>
-                      <p className="text-2xl font-bold text-emerald-500">0</p>
+                      <p className="text-2xl font-bold text-emerald-500">{hwOkCount}</p>
                     </div>
                     <div className="bg-slate-50/50 border border-slate-100 rounded-lg p-3 text-center">
                       <p className="text-[11px] text-slate-500 font-bold mb-1">수신된 불량 (NG)</p>
-                      <p className="text-2xl font-bold text-rose-500">0</p>
+                      <p className="text-2xl font-bold text-rose-500">{hwNgCount}</p>
                     </div>
                   </div>
                   
                   <div className="flex flex-col flex-1 min-h-[200px]">
                     <span className="text-[13px] font-bold text-slate-700 mb-2">뷰웍스 VIS7 판정 로그</span>
-                    <div className="flex-1 bg-slate-50 border border-slate-100 rounded-lg flex items-center justify-center text-xs text-slate-400 font-medium p-4">
-                      수신된 데이터가 없습니다.
-                    </div>
+                    {isHwConnected ? (
+                      <div className="flex-1 bg-white border border-slate-100 rounded-lg flex flex-col text-xs font-medium p-2 overflow-y-auto shadow-inner">
+                         <div className="flex items-center justify-between border border-slate-100 rounded p-2 mb-2 hover:border-slate-300 transition-colors">
+                           <div className="flex items-center gap-3">
+                             <div className="w-1.5 h-1.5 rounded-full bg-rose-500"></div>
+                             <span className="text-slate-400 text-[11px]">[오전 11:52:42]</span>
+                             <span className="text-rose-600 font-bold text-[13px]">표면 미세 스크래치(HW)</span>
+                           </div>
+                           <div className="w-9 h-9 rounded bg-rose-100 border border-rose-200 flex items-center justify-center overflow-hidden flex-shrink-0">
+                             <div className="w-full h-full bg-rose-200/50 flex flex-col items-center justify-center text-[5px] text-rose-600 font-bold text-center leading-tight"><span>ERROR</span><span>DETECT</span></div>
+                           </div>
+                         </div>
+                      </div>
+                    ) : (
+                      <div className="flex-1 bg-slate-50 border border-slate-100 rounded-lg flex items-center justify-center text-xs text-slate-400 font-medium p-4 shadow-inner">
+                        수신된 데이터가 없습니다.
+                      </div>
+                    )}
                   </div>
                 </div>
                 
-                <div className="flex flex-col gap-2 shrink-0">
-                  <button className="w-full h-12 rounded-lg bg-[#c026d3] hover:bg-[#a21caf] text-white font-bold flex items-center justify-center gap-2 transition-colors shadow-sm text-sm">
-                    <Link className="w-4 h-4" /> 장비 실시간 연결 (API)
-                  </button>
+                <div className="flex flex-col gap-2 shrink-0 mt-auto">
+                  {isHwConnected ? (
+                    <button onClick={toggleHwConnection} className="w-full h-12 rounded-lg bg-rose-500 hover:bg-rose-600 text-white font-bold flex items-center justify-center gap-2 transition-colors shadow-sm text-sm">
+                      <Square className="w-4 h-4" /> 하드웨어 연결 중지
+                    </button>
+                  ) : (
+                    <button onClick={toggleHwConnection} className="w-full h-12 rounded-lg bg-[#c026d3] hover:bg-[#a21caf] text-white font-bold flex items-center justify-center gap-2 transition-colors shadow-sm text-sm">
+                      <Link className="w-4 h-4" /> 장비 실시간 연결 (API)
+                    </button>
+                  )}
                   <div className="flex gap-2">
                     <button className="flex-1 h-10 rounded-lg bg-slate-50 hover:bg-slate-100 text-slate-400 font-medium text-xs border border-slate-200 flex items-center justify-center gap-1.5 transition-colors">
                       <Bug className="w-3.5 h-3.5" /> 강제 불량 수신 테스트
