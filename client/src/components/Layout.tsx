@@ -26,6 +26,9 @@ interface LayoutProps {
     '/privacy-policy': '개인정보',
     '/terms-of-service': '이용약관',
     '/cookie-policy': '쿠키정책',
+    '/ai-data-settings': '데이터 분석 설정',
+    '/ai-ontology': 'AI 온톨로지 분석',
+    '/ai-pattern': '패턴 매칭',
   }
 
 /**
@@ -53,6 +56,9 @@ const Layout = ({ children }: LayoutProps) => {
     { label: '이미지 편집', path: '/image-editor' },
     { label: '동영상 제작', path: '/video-maker' },
     { label: '채팅', path: '/chat' },
+    { label: '데이터 분석 설정', path: '/ai-data-settings' },
+    { label: 'AI 온톨로지 분석', path: '/ai-ontology' },
+    { label: '패턴 매칭', path: '/ai-pattern' },
   ]
 
   const filteredMenus = allMenus.filter(menu => 

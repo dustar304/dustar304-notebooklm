@@ -20,7 +20,11 @@ import {
   ChevronRight,
   ChevronDown,
   PanelLeftClose,
-  PanelLeftOpen
+  PanelLeftOpen,
+  Database,
+  Network,
+  Search,
+  SlidersHorizontal
 } from 'lucide-react'
 import { cn } from '../lib/utils'
 import { useAppStore } from '../store/useAppStore'
@@ -66,6 +70,13 @@ const Sidebar = () => {
     { icon: Shield,     label: '개인정보', path: '/privacy-policy' },
     { icon: FileCheck,  label: '이용약관', path: '/terms-of-service' },
     { icon: Cookie,     label: '쿠키정책', path: '/cookie-policy' },
+  ]
+
+  // AI 데이터 분석
+  const aiDataItems = [
+    { icon: SlidersHorizontal, label: '데이터 분석 설정', path: '/ai-data-settings' },
+    { icon: Network,           label: 'AI 온톨로지 분석', path: '/ai-ontology' },
+    { icon: Search,            label: '패턴 매칭',        path: '/ai-pattern' },
   ]
 
   const renderMenuItem = (item: { icon: React.ElementType; label: string; path: string }, isSub = false) => {
@@ -146,6 +157,7 @@ const Sidebar = () => {
       <div className="flex-1 overflow-y-auto custom-scrollbar py-2">
         {/* 그룹 메뉴들 */}
         {renderGroup('sf', '스마트팩토리', sfItems, Factory)}
+        {renderGroup('aiData', 'AI 데이터 분석', aiDataItems, Database)}
         {renderGroup('main', '기본서비스', mainItems, LayoutDashboard)}
         {renderGroup('support', '시스템', supportItems, Settings)}
       </div>

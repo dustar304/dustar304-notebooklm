@@ -25,6 +25,11 @@ const VisionSetupPage = lazy(() => import('./pages/VisionSetup'))
 const ItemMaster = lazy(() => import('./pages/ItemMaster'))
 const DefectTypeMaster = lazy(() => import('./pages/DefectTypeMaster'))
 
+// AI 데이터 분석 페이지
+const DataAnalysisSettings = lazy(() => import('./pages/DataAnalysisSettings'))
+const AIOntologyAnalysis = lazy(() => import('./pages/AIOntologyAnalysis'))
+const PatternMatching = lazy(() => import('./pages/PatternMatching'))
+
 const VALID_PATHS = [
   '/',
   '/pdf-converter',
@@ -41,6 +46,9 @@ const VALID_PATHS = [
   '/sf-vision-setup',
   '/sf-items',
   '/sf-defect-types',
+  '/ai-data-settings',
+  '/ai-ontology',
+  '/ai-pattern',
 ]
 
 function isValidPath(path: string) {
@@ -82,6 +90,10 @@ function PageManager() {
   const [sfItemsLoaded, setSfItemsLoaded] = useState(false)
   const [sfDefectTypesLoaded, setSfDefectTypesLoaded] = useState(false)
 
+  const [aiDataSettingsLoaded, setAiDataSettingsLoaded] = useState(false)
+  const [aiOntologyLoaded, setAiOntologyLoaded] = useState(false)
+  const [aiPatternLoaded, setAiPatternLoaded] = useState(false)
+
   useEffect(() => {
     if (path === '/video-maker') setVideoMakerLoaded(true)
     if (path === '/chat') setChatRoomLoaded(true)
@@ -91,6 +103,9 @@ function PageManager() {
     if (path === '/sf-vision-setup') setSfVisionSetupLoaded(true)
     if (path === '/sf-items') setSfItemsLoaded(true)
     if (path === '/sf-defect-types') setSfDefectTypesLoaded(true)
+    if (path === '/ai-data-settings') setAiDataSettingsLoaded(true)
+    if (path === '/ai-ontology') setAiOntologyLoaded(true)
+    if (path === '/ai-pattern') setAiPatternLoaded(true)
   }, [path])
 
   // 유효하지 않은 경로 → 홈으로 리다이렉트
@@ -196,6 +211,31 @@ function PageManager() {
         <div className="flex-1 flex-col min-h-0 overflow-hidden" style={{ display: path === '/sf-defect-types' ? 'flex' : 'none' }}>
           <Suspense fallback={<SFLoading />}>
             <DefectTypeMaster />
+          </Suspense>
+        </div>
+      )}
+
+      {/* ─── AI 데이터 분석 페이지 ─── */}
+      {aiDataSettingsLoaded && (
+        <div className="flex-1 flex-col min-h-0 overflow-hidden" style={{ display: path === '/ai-data-settings' ? 'flex' : 'none' }}>
+          <Suspense fallback={<SFLoading />}>
+            <DataAnalysisSettings />
+          </Suspense>
+        </div>
+      )}
+
+      {aiOntologyLoaded && (
+        <div className="flex-1 flex-col min-h-0 overflow-hidden" style={{ display: path === '/ai-ontology' ? 'flex' : 'none' }}>
+          <Suspense fallback={<SFLoading />}>
+            <AIOntologyAnalysis />
+          </Suspense>
+        </div>
+      )}
+
+      {aiPatternLoaded && (
+        <div className="flex-1 flex-col min-h-0 overflow-hidden" style={{ display: path === '/ai-pattern' ? 'flex' : 'none' }}>
+          <Suspense fallback={<SFLoading />}>
+            <PatternMatching />
           </Suspense>
         </div>
       )}
