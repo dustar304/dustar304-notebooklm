@@ -77,6 +77,7 @@ const Sidebar = () => {
     { icon: SlidersHorizontal, label: '데이터 분석 설정', path: '/ai-data-settings' },
     { icon: Network,           label: 'AI 온톨로지 분석', path: '/ai-ontology' },
     { icon: Search,            label: '온톨로지 관리',    path: '/ai-ontology-manage' },
+    { icon: Database,          label: '실시간 인사이트 플랫폼', path: '/ai-realtime' },
   ]
 
   const renderMenuItem = (item: { icon: React.ElementType; label: string; path: string }, isSub = false) => {

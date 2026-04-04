@@ -29,6 +29,7 @@ const DefectTypeMaster = lazy(() => import('./pages/DefectTypeMaster'))
 const DataAnalysisSettings = lazy(() => import('./pages/DataAnalysisSettings'))
 const AIOntologyAnalysis = lazy(() => import('./pages/AIOntologyAnalysis'))
 const OntologyManagement = lazy(() => import('./pages/OntologyManagement'))
+const RealtimeInsight = lazy(() => import('./pages/RealtimeInsight'))
 
 const VALID_PATHS = [
   '/',
@@ -49,6 +50,7 @@ const VALID_PATHS = [
   '/ai-data-settings',
   '/ai-ontology',
   '/ai-ontology-manage',
+  '/ai-realtime',
 ]
 
 function isValidPath(path: string) {
@@ -93,6 +95,7 @@ function PageManager() {
   const [aiDataSettingsLoaded, setAiDataSettingsLoaded] = useState(false)
   const [aiOntologyLoaded, setAiOntologyLoaded] = useState(false)
   const [aiOntologyManageLoaded, setAiOntologyManageLoaded] = useState(false)
+  const [aiRealtimeLoaded, setAiRealtimeLoaded] = useState(false)
 
   useEffect(() => {
     if (path === '/video-maker') setVideoMakerLoaded(true)
@@ -106,6 +109,7 @@ function PageManager() {
     if (path === '/ai-data-settings') setAiDataSettingsLoaded(true)
     if (path === '/ai-ontology') setAiOntologyLoaded(true)
     if (path === '/ai-ontology-manage') setAiOntologyManageLoaded(true)
+    if (path === '/ai-realtime') setAiRealtimeLoaded(true)
   }, [path])
 
   // 유효하지 않은 경로 → 홈으로 리다이렉트
@@ -236,6 +240,14 @@ function PageManager() {
         <div className="flex-1 flex-col min-h-0 overflow-hidden" style={{ display: path === '/ai-ontology-manage' ? 'flex' : 'none' }}>
           <Suspense fallback={<SFLoading />}>
             <OntologyManagement />
+          </Suspense>
+        </div>
+      )}
+
+      {aiRealtimeLoaded && (
+        <div className="flex-1 flex-col min-h-0 overflow-hidden" style={{ display: path === '/ai-realtime' ? 'flex' : 'none' }}>
+          <Suspense fallback={<SFLoading />}>
+            <RealtimeInsight />
           </Suspense>
         </div>
       )}

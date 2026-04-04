@@ -29,6 +29,7 @@ interface LayoutProps {
     '/ai-data-settings': '데이터 분석 설정',
     '/ai-ontology': 'AI 온톨로지 분석',
     '/ai-ontology-manage': '온톨로지 관리',
+    '/ai-realtime': '실시간 인사이트 플랫폼',
   }
 
 /**
@@ -59,6 +60,7 @@ const Layout = ({ children }: LayoutProps) => {
     { label: '데이터 분석 설정', path: '/ai-data-settings' },
     { label: 'AI 온톨로지 분석', path: '/ai-ontology' },
     { label: '온톨로지 관리', path: '/ai-ontology-manage' },
+    { label: '실시간 인사이트 플랫폼', path: '/ai-realtime' },
   ]
 
   const filteredMenus = allMenus.filter(menu => 
