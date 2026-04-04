@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
   Upload,
@@ -16,10 +16,81 @@ import {
   Cpu,
 } from 'lucide-react'
 import Footer from '../components/Footer'
-import waveVideo from '../AI_robot.mp4'
 
 const Home = () => {
   const navigate = useNavigate()
+  
+  // WebP 애니메이션 상태 및 참조
+  const canvasRef = useRef<HTMLCanvasElement>(null)
+  const [imagesLoaded, setImagesLoaded] = useState(false)
+  const [loadProgress, setLoadProgress] = useState(0)
+  const frameCount = 287
+  const imagesRef = useRef<HTMLImageElement[]>([])
+
+  useEffect(() => {
+    let loadedCount = 0
+    const loadImages = async () => {
+      const promises = Array.from({ length: frameCount }).map((_, i) => {
+        return new Promise<HTMLImageElement>((resolve) => {
+          const img = new Image()
+          img.src = `/frames_robot/frame_${(i + 1).toString().padStart(4, '0')}.webp`
+          img.onload = () => {
+            loadedCount++
+            setLoadProgress(Math.round((loadedCount / frameCount) * 100))
+            imagesRef.current[i] = img
+            resolve(img)
+          }
+          img.onerror = () => {
+            loadedCount++
+            setLoadProgress(Math.round((loadedCount / frameCount) * 100))
+            resolve(img)
+          }
+        })
+      })
+      await Promise.all(promises)
+      setImagesLoaded(true)
+    }
+    loadImages()
+  }, [])
+
+  useEffect(() => {
+    if (!imagesLoaded || !canvasRef.current) return
+    const canvas = canvasRef.current
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return
+    
+    let frameIndex = 0
+    let animationFrameId: number
+    let lastTime = performance.now()
+    const fps = 24
+    const interval = 1000 / fps
+
+    const firstImage = imagesRef.current[0]
+    if (firstImage) {
+        canvas.width = firstImage.width
+        canvas.height = firstImage.height
+    }
+
+    const renderLoop = (time: number) => {
+      animationFrameId = requestAnimationFrame(renderLoop)
+      const deltaTime = time - lastTime
+      
+      if (deltaTime >= interval) {
+        lastTime = time - (deltaTime % interval)
+        
+        const img = imagesRef.current[frameIndex]
+        if (img && img.complete && img.naturalWidth > 0) {
+          ctx.clearRect(0, 0, canvas.width, canvas.height)
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
+        }
+        
+        frameIndex = (frameIndex + 1) % frameCount
+      }
+    }
+    
+    animationFrameId = requestAnimationFrame(renderLoop)
+    return () => cancelAnimationFrame(animationFrameId)
+  }, [imagesLoaded])
 
   const workflowSteps = [
     { icon: Upload,    text: '데이터 업로드' },
@@ -74,24 +145,17 @@ const Home = () => {
 
         {/* ── 헤더 ── */}
         <div className="relative text-center mb-8 sm:mb-12 py-24 sm:py-32 overflow-hidden bg-slate-950 w-full min-h-[600px] flex flex-col justify-center">
-          {/* 동영상 배경 (자동 재생 및 마우스 호버 시 재생 보장) */}
-          <div 
-            className="absolute inset-0 z-0 w-full h-full flex items-center justify-center"
-            onMouseEnter={(e) => {
-              const video = e.currentTarget.querySelector('video')
-              if (video) video.play().catch(() => {})
-            }}
-          >
-            <video 
-              src={waveVideo} 
-              type="video/mp4"
-              className="w-full h-full object-contain opacity-80 mix-blend-screen pointer-events-none"
-              autoPlay
-              muted
-              loop
-              playsInline
-              disablePictureInPicture
-              disableRemotePlayback
+          {/* 동영상 배경 (WebP 캔버스 애니메이션) */}
+          <div className="absolute inset-0 z-0 w-full h-full flex items-center justify-center bg-slate-950">
+            {!imagesLoaded && (
+              <div className="absolute inset-0 flex flex-col items-center justify-center text-cyan-400 z-10">
+                <div className="w-10 h-10 border-4 border-cyan-400 border-t-transparent rounded-full animate-spin mb-4"></div>
+                <span className="text-sm font-bold animate-pulse">Loading Animation... {loadProgress}%</span>
+              </div>
+            )}
+            <canvas 
+              ref={canvasRef}
+              className={`w-full h-full object-contain opacity-80 mix-blend-screen pointer-events-none transition-opacity duration-1000 ${imagesLoaded ? 'opacity-80' : 'opacity-0'}`}
             />
             {/* 영상 위에 약간의 오버레이 추가 (가독성을 위해) */}
             <div className="absolute inset-0 bg-slate-950/40 pointer-events-none w-full h-full"></div>
@@ -193,6 +257,7 @@ const Home = () => {
               )
             })}
           </div>
+        </div>
         </div>
 
       </div>
