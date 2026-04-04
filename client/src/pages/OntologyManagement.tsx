@@ -17,7 +17,7 @@ import {
   CheckCircle2,
   TrendingUp,
   AlertTriangle
-, Sparkles, BarChart3, Play, Activity} from 'lucide-react'
+, Sparkles, BarChart3, Play} from 'lucide-react'
 
 export default function OntologyManagement() {
   const [activeTab, setActiveTab] = useState('개요')
