@@ -270,10 +270,6 @@ export default function AIOntologyAnalysis() {
 
       </div>
 
-      {/* Floating Action Button */}
-      <button onClick={handleVectorizeClick} className="absolute bottom-6 right-6 w-14 h-14 bg-[#4f46e5] hover:bg-[#4338ca] rounded-full shadow-[0_4px_14px_rgba(79,70,229,0.5)] flex items-center justify-center text-white transition-transform hover:scale-105 active:scale-95 z-50">
-        <Zap className="w-6 h-6 fill-white" />
-      </button>
 
       {/* Vectorization Modal */}
       {showVectorizeModal && (
