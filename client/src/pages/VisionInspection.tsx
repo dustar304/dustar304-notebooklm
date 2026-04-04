@@ -23,9 +23,9 @@ export default function VisionInspectionPage() {
   const [activeTab, setActiveTab] = useState<'software' | 'hardware'>('software');
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [isLive, setIsLive] = useState(false);
-  const [isHwConnected, setIsHwConnected] = useState(false);
-  const [hwOkCount, setHwOkCount] = useState(0);
-  const [hwNgCount, setHwNgCount] = useState(0);
+  const [isHwConnected, setIsHwConnected] = useState(true);
+  const [hwOkCount, setHwOkCount] = useState(1);
+  const [hwNgCount, setHwNgCount] = useState(1);
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
