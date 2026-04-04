@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   Database,
   FileText,
@@ -10,19 +11,95 @@ import {
   Zap,
   Check,
   Settings,
-  X
+  X,
+  Loader2
 } from 'lucide-react'
 
 export default function AIOntologyAnalysis() {
+  const queryClient = useQueryClient();
   const [showVectorizeModal, setShowVectorizeModal] = useState(false);
+  const [selectedModel, setSelectedModel] = useState('OpenAI text-embedding-3-small');
+
+  const { data: stats, isLoading: statsLoading } = useQuery({
+    queryKey: ['/api/ontology/stats'],
+    refetchInterval: 5000
+  });
+
+  const { data: tablesData, isLoading: tablesLoading } = useQuery({
+    queryKey: ['/api/ontology/tables'],
+    refetchInterval: 5000
+  });
+
+  const vectorizeAllMutation = useMutation({
+    mutationFn: async (model: string) => {
+      const res = await fetch('/api/ontology/vectorize-all', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ embeddingModel: model })
+      });
+      if (!res.ok) throw new Error('Vectorization failed');
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/ontology/stats'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/ontology/tables'] });
+      alert('전체 테이블 벡터화 및 캐싱이 완료되었습니다.');
+      setShowVectorizeModal(false);
+    },
+    onError: (err) => {
+      alert('벡터화 중 오류가 발생했습니다.');
+      console.error(err);
+    }
+  });
+
+  const vectorizeSingleMutation = useMutation({
+    mutationFn: async ({ tableName, model }: { tableName: string, model: string }) => {
+      const res = await fetch('/api/ontology/vectorize', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ tableName, embeddingModel: model })
+      });
+      if (!res.ok) throw new Error(`Vectorization failed for ${tableName}`);
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/ontology/stats'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/ontology/tables'] });
+    },
+    onError: (err) => {
+      alert('테이블 벡터화 중 오류가 발생했습니다.');
+      console.error(err);
+    }
+  });
 
   const handleVectorizeClick = () => {
     setShowVectorizeModal(true);
   };
 
   const handleCloseModal = () => {
-    setShowVectorizeModal(false);
+    if (!vectorizeAllMutation.isPending) {
+      setShowVectorizeModal(false);
+    }
   };
+
+  const handleVectorizeAll = () => {
+    vectorizeAllMutation.mutate(selectedModel);
+  };
+
+  const handleRefresh = () => {
+    queryClient.invalidateQueries({ queryKey: ['/api/ontology/stats'] });
+    queryClient.invalidateQueries({ queryKey: ['/api/ontology/tables'] });
+  };
+
+  const formatDate = (dateString?: string) => {
+    if (!dateString) return '-';
+    const date = new Date(dateString);
+    return `${date.getMonth() + 1}월 ${date.getDate()}일`;
+  };
+
+  const availableTables = tablesData?.available || [];
+  const vectorizedTables = tablesData?.vectorized || [];
+
 
   return (
     <div className="flex flex-col h-full bg-[#f8f9fa] p-4 gap-4 overflow-y-auto custom-scrollbar relative">
@@ -39,7 +116,9 @@ export default function AIOntologyAnalysis() {
           <div className="flex-1 flex flex-col items-center justify-center relative">
             <Database className="absolute left-4 bottom-3 w-8 h-8 text-blue-200/50" />
             <div className="flex flex-col items-center leading-none mt-1">
-              <span className="text-3xl font-bold text-blue-600">206</span>
+              <span className="text-3xl font-bold text-blue-600">
+                {statsLoading ? '-' : (stats?.vectorizedTablesCount || 0)}
+              </span>
               <span className="text-[11px] text-slate-500 font-medium mt-1">개</span>
             </div>
           </div>
@@ -54,7 +133,9 @@ export default function AIOntologyAnalysis() {
           <div className="flex-1 flex flex-col items-center justify-center relative">
             <FileText className="absolute left-4 bottom-3 w-8 h-8 text-slate-200" />
             <div className="flex flex-col items-center leading-none mt-1">
-              <span className="text-3xl font-bold text-[#c026d3]">8,083</span>
+              <span className="text-3xl font-bold text-[#c026d3]">
+                {statsLoading ? '-' : (stats?.totalDocuments?.toLocaleString() || 0)}
+              </span>
               <span className="text-[11px] text-slate-500 font-medium mt-1">개</span>
             </div>
           </div>
@@ -69,7 +150,9 @@ export default function AIOntologyAnalysis() {
           <div className="flex-1 flex flex-col items-center justify-center relative">
             <HardDrive className="absolute left-4 bottom-3 w-8 h-8 text-amber-200/60" />
             <div className="flex flex-col items-center leading-none mt-1">
-              <span className="text-3xl font-bold text-[#059669]">206</span>
+              <span className="text-3xl font-bold text-[#059669]">
+                {statsLoading ? '-' : (stats?.cacheSizeMB || '0.00')}
+              </span>
               <span className="text-[11px] text-slate-500 font-medium mt-1">MB</span>
             </div>
           </div>
@@ -84,7 +167,9 @@ export default function AIOntologyAnalysis() {
           <div className="flex-1 flex flex-col items-center justify-center relative">
             <Clock className="absolute left-4 bottom-3 w-8 h-8 text-slate-200" />
             <div className="flex flex-col items-center leading-none mt-1">
-              <span className="text-2xl font-bold text-[#ea580c] mt-1">4월 3일</span>
+              <span className="text-2xl font-bold text-[#ea580c] mt-1">
+                {statsLoading ? '-' : formatDate(stats?.lastUpdated)}
+              </span>
               <span className="text-[11px] text-slate-500 font-medium mt-1">일자</span>
             </div>
           </div>
@@ -102,50 +187,51 @@ export default function AIOntologyAnalysis() {
               <TableProperties className="w-4 h-4" />
               <span className="text-[13px] font-bold">사용 가능한 테이블</span>
             </div>
-            <button className="w-6 h-6 rounded bg-white border border-slate-200 flex items-center justify-center text-slate-600 hover:bg-slate-50">
+            <button onClick={handleRefresh} className="w-6 h-6 rounded bg-white border border-slate-200 flex items-center justify-center text-slate-600 hover:bg-slate-50">
               <RefreshCcw className="w-3.5 h-3.5" />
             </button>
           </div>
           <div className="flex-1 overflow-y-auto p-3 flex flex-col gap-2">
             
-            {/* Items */}
-            <div className="flex items-center justify-between px-4 py-3 rounded-lg border border-slate-100 hover:bg-slate-50 transition-colors">
-              <div className="flex items-center gap-2">
-                <span className="text-[13px] font-bold text-slate-700">ac_detail</span>
-                <Check className="w-3 h-3 text-slate-600" strokeWidth={3} />
+            {tablesLoading ? (
+              <div className="flex-1 flex items-center justify-center text-slate-400 text-sm">
+                <Loader2 className="w-5 h-5 animate-spin mr-2" /> 로딩 중...
               </div>
-              <button className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-slate-200 rounded text-slate-700 text-xs font-bold hover:bg-slate-50">
-                <Zap className="w-3.5 h-3.5" /> 재
-              </button>
-            </div>
+            ) : availableTables.length === 0 ? (
+              <div className="flex-1 flex items-center justify-center text-slate-400 text-sm">
+                사용 가능한 테이블이 없습니다.
+              </div>
+            ) : (
+              availableTables.map((tableName: string) => {
+                const isVectorized = vectorizedTables.includes(tableName);
+                const isPending = vectorizeSingleMutation.variables?.tableName === tableName && vectorizeSingleMutation.isPending;
 
-            <div className="flex items-center justify-between px-4 py-3 rounded-lg border border-slate-100 hover:bg-slate-50 transition-colors">
-              <span className="text-[13px] font-bold text-slate-700">ac_detail_temp</span>
-              <button className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 border border-blue-600 rounded text-white text-xs font-bold hover:bg-blue-700 shadow-sm">
-                <Zap className="w-3.5 h-3.5 fill-white" /> 벡터화
-              </button>
-            </div>
-
-            <div className="flex items-center justify-between px-4 py-3 rounded-lg border border-slate-100 hover:bg-slate-50 transition-colors">
-              <span className="text-[13px] font-bold text-slate-700">ac_detail_trans</span>
-              <button className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 border border-blue-600 rounded text-white text-xs font-bold hover:bg-blue-700 shadow-sm">
-                <Zap className="w-3.5 h-3.5 fill-white" /> 벡터화
-              </button>
-            </div>
-
-            <div className="flex items-center justify-between px-4 py-3 rounded-lg border border-slate-100 hover:bg-slate-50 transition-colors">
-              <span className="text-[13px] font-bold text-slate-700">ac_detail_trans_cost</span>
-              <button className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 border border-blue-600 rounded text-white text-xs font-bold hover:bg-blue-700 shadow-sm">
-                <Zap className="w-3.5 h-3.5 fill-white" /> 벡터화
-              </button>
-            </div>
-
-            <div className="flex items-center justify-between px-4 py-3 rounded-lg border border-slate-100 hover:bg-slate-50 transition-colors">
-              <span className="text-[13px] font-bold text-slate-700">ac_ilbo_mst</span>
-              <button className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 border border-blue-600 rounded text-white text-xs font-bold hover:bg-blue-700 shadow-sm">
-                <Zap className="w-3.5 h-3.5 fill-white" /> 벡터화
-              </button>
-            </div>
+                return (
+                  <div key={tableName} className="flex items-center justify-between px-4 py-3 rounded-lg border border-slate-100 hover:bg-slate-50 transition-colors">
+                    <div className="flex items-center gap-2">
+                      <span className="text-[13px] font-bold text-slate-700">{tableName}</span>
+                      {isVectorized && <Check className="w-3 h-3 text-slate-600" strokeWidth={3} />}
+                    </div>
+                    <button 
+                      onClick={() => vectorizeSingleMutation.mutate({ tableName, model: selectedModel })}
+                      disabled={isPending}
+                      className={`flex items-center gap-1.5 px-3 py-1.5 rounded text-xs font-bold shadow-sm transition-colors ${
+                        isVectorized 
+                          ? 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-50' 
+                          : 'bg-blue-600 border border-blue-600 text-white hover:bg-blue-700'
+                      } ${isPending ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    >
+                      {isPending ? (
+                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                      ) : (
+                        <Zap className={`w-3.5 h-3.5 ${isVectorized ? '' : 'fill-white'}`} />
+                      )}
+                      {isPending ? '진행 중' : (isVectorized ? '재실행' : '벡터화')}
+                    </button>
+                  </div>
+                );
+              })
+            )}
             
           </div>
         </div>
@@ -160,15 +246,24 @@ export default function AIOntologyAnalysis() {
           </div>
           <div className="flex-1 overflow-y-auto p-3 flex flex-col gap-2">
             
-            {/* Items */}
-            {['cust_mst', 'item_mst', 'emp_mst', 't_pur_mst', 'dg_tax_mst', 'dg_mst'].map((tableName) => (
-              <div key={tableName} className="flex items-center justify-between px-4 py-3 rounded-lg border border-slate-100 hover:bg-slate-50 transition-colors">
-                <span className="text-[13px] font-bold text-slate-700">{tableName}</span>
-                <div className="w-5 h-5 rounded-full bg-blue-600 flex items-center justify-center text-white shadow-sm">
-                  <Check className="w-3.5 h-3.5" strokeWidth={3} />
-                </div>
+            {tablesLoading ? (
+              <div className="flex-1 flex items-center justify-center text-slate-400 text-sm">
+                <Loader2 className="w-5 h-5 animate-spin mr-2" /> 로딩 중...
               </div>
-            ))}
+            ) : vectorizedTables.length === 0 ? (
+              <div className="flex-1 flex items-center justify-center text-slate-400 text-sm">
+                벡터화된 테이블이 없습니다.
+              </div>
+            ) : (
+              vectorizedTables.map((tableName: string) => (
+                <div key={tableName} className="flex items-center justify-between px-4 py-3 rounded-lg border border-slate-100 hover:bg-slate-50 transition-colors">
+                  <span className="text-[13px] font-bold text-slate-700">{tableName}</span>
+                  <div className="w-5 h-5 rounded-full bg-blue-600 flex items-center justify-center text-white shadow-sm">
+                    <Check className="w-3.5 h-3.5" strokeWidth={3} />
+                  </div>
+                </div>
+              ))
+            )}
             
           </div>
         </div>
@@ -275,7 +370,11 @@ export default function AIOntologyAnalysis() {
                   <h4 className="text-sm font-bold text-slate-800 mb-3 flex items-center gap-2">
                     <Zap className="w-4 h-4 text-slate-500" /> 임베딩 모델 선택
                   </h4>
-                  <select className="w-full bg-white border border-slate-200 text-slate-700 text-sm font-medium rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block p-3 outline-none shadow-sm transition-shadow">
+                  <select 
+                    value={selectedModel}
+                    onChange={(e) => setSelectedModel(e.target.value)}
+                    className="w-full bg-white border border-slate-200 text-slate-700 text-sm font-medium rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block p-3 outline-none shadow-sm transition-shadow"
+                  >
                     <option>OpenAI text-embedding-3-small (기본 설정, 빠름)</option>
                     <option>OpenAI text-embedding-3-large (높은 정확도)</option>
                     <option>Cohere embed-multilingual-v3.0 (다국어 최적화)</option>
@@ -300,13 +399,17 @@ export default function AIOntologyAnalysis() {
                   취소
                 </button>
                 <button 
-                  onClick={() => {
-                    alert('전체 테이블 벡터화 및 JSON 캐싱 작업이 백그라운드에서 시작되었습니다.');
-                    handleCloseModal();
-                  }}
-                  className="px-5 py-2.5 text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-sm flex items-center gap-2 transition-all hover:shadow-md"
+                  onClick={handleVectorizeAll}
+                  disabled={vectorizeAllMutation.isPending}
+                  className={`px-5 py-2.5 text-sm font-bold text-white rounded-xl shadow-sm flex items-center gap-2 transition-all hover:shadow-md ${
+                    vectorizeAllMutation.isPending ? 'bg-blue-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'
+                  }`}
                 >
-                  <Database className="w-4 h-4" /> 벡터화 실행
+                  {vectorizeAllMutation.isPending ? (
+                    <><Loader2 className="w-4 h-4 animate-spin" /> 처리 중...</>
+                  ) : (
+                    <><Database className="w-4 h-4" /> 벡터화 실행</>
+                  )}
                 </button>
               </div>
             </div>
