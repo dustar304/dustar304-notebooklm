@@ -386,10 +386,279 @@ export default function OntologyManagement() {
                   </div>
                 </div>
               </div>
-            </div>
-          </div>
+            
+
+          {activeTab === 'AI' && (
+            <div className="flex flex-col gap-4">
+              <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+                {/* AI 플랫폼 활동 (Bar Chart) */}
+                <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-5 flex flex-col">
+                  <h3 className="flex items-center gap-2 text-[14px] font-bold text-orange-500 mb-1">
+                    <Zap className="w-4 h-4" /> AI 플랫폼 활동
+                  </h3>
+                  <p className="text-[10px] text-slate-400 mb-6">시간대별 AI 플랫폼의 활동량을 막대 그래프로 표시합니다. 쿼리 실행, 벡터화 작업, 분석 작업의 시간대별 분포를 확인할 수 있습니다.</p>
+                  
+                  <div className="flex-1 flex items-end relative min-h-[220px] px-8">
+                    {/* Y-axis labels */}
+                    <div className="absolute left-0 top-0 bottom-6 flex flex-col justify-between text-[10px] text-slate-400 pr-2 pb-2 h-full">
+                      <span>800</span><span>600</span><span>400</span><span>200</span><span>0</span>
+                    </div>
+                    
+                    {/* Grid lines */}
+                    <div className="absolute left-6 right-32 top-0 bottom-6 flex flex-col justify-between h-full pointer-events-none">
+                      {[0, 1, 2, 3, 4].map((i) => (
+                        <div key={i} className="w-full h-[1px] bg-slate-100 border-b border-dashed border-slate-200/50"></div>
+                      ))}
+                    </div>
+
+                    {/* Bars */}
+                    <style>
+                        {`
+                          @keyframes growUpAi {
+                            from { transform: scaleY(0); opacity: 0; }
+                            to { transform: scaleY(1); opacity: 1; }
+                          }
+                        `}
+                    </style>
+                    <div className="w-[calc(100%-8rem)] h-[calc(100%-1.5rem)] absolute left-6 bottom-6 flex items-end justify-between px-2">
+                      {[
+                        [650, 100, 150], [200, 80, 100], [100, 60, 80], [300, 120, 100],
+                        [150, 90, 70], [220, 100, 90], [180, 80, 100], [380, 150, 120],
+                        [120, 70, 80], [550, 200, 150], [100, 50, 60], [380, 120, 100]
+                      ].map((val, i) => (
+                        <div key={i} className="flex flex-col items-center h-full justify-end flex-1 relative group">
+                          <div className="flex gap-[2px] h-full items-end justify-center w-full relative z-10">
+                            <div className="w-[30%] max-w-[10px] bg-orange-500 rounded-t-[2px] shadow-sm transition-all duration-300 hover:opacity-80" style={{ height: `${val[0] / 8}%`, transformOrigin: 'bottom', animation: `growUpAi 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) ${i * 0.05}s both` }}></div>
+                            <div className="w-[30%] max-w-[10px] bg-cyan-500 rounded-t-[2px] shadow-sm transition-all duration-300 hover:opacity-80" style={{ height: `${val[1] / 8}%`, transformOrigin: 'bottom', animation: `growUpAi 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) ${i * 0.05 + 0.05}s both` }}></div>
+                            <div className="w-[30%] max-w-[10px] bg-purple-500 rounded-t-[2px] shadow-sm transition-all duration-300 hover:opacity-80" style={{ height: `${val[2] / 8}%`, transformOrigin: 'bottom', animation: `growUpAi 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) ${i * 0.05 + 0.1}s both` }}></div>
+                          </div>
+                          {/* X-axis tick & label */}
+                          <div className="absolute top-full left-1/2 -translate-x-1/2 flex flex-col items-center" style={{ opacity: 0, animation: `growUpAi 0.4s ease-out ${i * 0.05 + 0.2}s both` }}>
+                            <div className="w-[1px] h-1 bg-slate-300"></div>
+                            {i % 3 === 0 ? <span className="text-[10px] text-slate-500 mt-1">{i * 3}h</span> : <span className="text-[10px] text-slate-500 mt-1">&nbsp;</span>}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Legend */}
+                    <div className="absolute right-0 top-1/2 -translate-y-1/2 flex flex-col gap-4 pl-4 border-l border-slate-100">
+                      <div className="flex items-start gap-2">
+                        <div className="w-3 h-3 bg-orange-500 mt-0.5 shrink-0 rounded-sm"></div>
+                        <div className="flex flex-col">
+                          <span className="text-[11px] font-bold text-slate-700">쿼리</span>
+                          <span className="text-[9px] text-slate-400">검색 및 조회 작업</span>
+                        </div>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <div className="w-3 h-3 bg-cyan-500 mt-0.5 shrink-0 rounded-sm"></div>
+                        <div className="flex flex-col">
+                          <span className="text-[11px] font-bold text-slate-700">벡터화</span>
+                          <span className="text-[9px] text-slate-400">벡터 임베딩 작업</span>
+                        </div>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <div className="w-3 h-3 bg-purple-500 mt-0.5 shrink-0 rounded-sm"></div>
+                        <div className="flex flex-col">
+                          <span className="text-[11px] font-bold text-slate-700">분석</span>
+                          <span className="text-[9px] text-slate-400">AI 분석 작업</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="mt-4 grid grid-cols-2 gap-4 border-t border-slate-100 pt-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-xl bg-purple-100 flex items-center justify-center text-purple-600">
+                        <Zap className="w-5 h-5" />
+                      </div>
+                      <div className="flex flex-col">
+                        <span className="text-xl font-bold text-slate-800 leading-none">7</span>
+                        <span className="text-[11px] font-bold text-slate-500 mt-1">AI 추론 엔티티</span>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center text-blue-600">
+                        <TrendingUp className="w-5 h-5" />
+                      </div>
+                      <div className="flex flex-col">
+                        <span className="text-xl font-bold text-slate-800 leading-none">90.5%</span>
+                        <span className="text-[11px] font-bold text-slate-500 mt-1">추론 신뢰도</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* AI 추론 성능 (Area Chart) */}
+                <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-5 flex flex-col">
+                  <h3 className="flex items-center gap-2 text-[14px] font-bold text-purple-600 mb-1">
+                    <Activity className="w-4 h-4" /> AI 추론 성능
+                  </h3>
+                  <p className="text-[10px] text-slate-400 mb-6">시간대별 AI 추론 작업(쿼리, 분석)의 성능 추이를 영역 차트로 표시합니다. AI 플랫폼의 활동 패턴과 부하 분포를 확인할 수 있습니다.</p>
+                  
+                  <div className="flex-1 flex items-end relative min-h-[220px] px-8">
+                    {/* Y-axis labels */}
+                    <div className="absolute left-0 top-0 bottom-6 flex flex-col justify-between text-[10px] text-slate-400 pr-2 pb-2 h-full">
+                      <span>800</span><span>600</span><span>400</span><span>200</span><span>0</span>
+                    </div>
+                    
+                    {/* Grid lines */}
+                    <div className="absolute left-6 right-32 top-0 bottom-6 flex flex-col justify-between h-full pointer-events-none">
+                      {[0, 1, 2, 3, 4].map((i) => (
+                        <div key={i} className="w-full h-[1px] bg-slate-100 border-b border-dashed border-slate-200/50"></div>
+                      ))}
+                    </div>
+
+                    {/* Area Chart SVG */}
+                    <div className="w-[calc(100%-8rem)] h-[calc(100%-1.5rem)] absolute left-6 bottom-6" style={{ animation: 'revealRight 1.5s cubic-bezier(0.25, 1, 0.5, 1) forwards' }}>
+                      <svg className="w-full h-full overflow-visible" preserveAspectRatio="none">
+                        <defs>
+                          <linearGradient id="gradientQuery" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" stopColor="#f97316" stopOpacity="0.5" />
+                            <stop offset="100%" stopColor="#f97316" stopOpacity="0.1" />
+                          </linearGradient>
+                          <linearGradient id="gradientAnalysis" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" stopColor="#a855f7" stopOpacity="0.6" />
+                            <stop offset="100%" stopColor="#a855f7" stopOpacity="0.1" />
+                          </linearGradient>
+                        </defs>
+                        <svg viewBox="0 0 110 100" preserveAspectRatio="none" className="w-full h-full overflow-visible">
+                          <g>
+                            {/* 쿼리 수 (주황색 영역) */}
+                            <path 
+                              d="M 0,18 Q 5,70 10,75 T 20,70 T 30,65 T 40,60 T 50,70 T 60,60 T 70,35 T 80,30 T 90,40 T 100,50 T 110,55 L 110,100 L 0,100 Z" 
+                              fill="url(#gradientQuery)" 
+                            />
+                            <path 
+                              d="M 0,18 Q 5,70 10,75 T 20,70 T 30,65 T 40,60 T 50,70 T 60,60 T 70,35 T 80,30 T 90,40 T 100,50 T 110,55" 
+                              fill="none" stroke="#f97316" strokeWidth="1.5" vectorEffect="non-scaling-stroke"
+                            />
+
+                            {/* 분석 수 (보라색 영역) */}
+                            <path 
+                              d="M 0,85 Q 5,90 10,90 T 20,88 T 30,85 T 40,90 T 50,85 T 60,88 T 70,95 T 80,90 T 90,88 T 100,85 T 110,88 L 110,100 L 0,100 Z" 
+                              fill="url(#gradientAnalysis)" 
+                            />
+                            <path 
+                              d="M 0,85 Q 5,90 10,90 T 20,88 T 30,85 T 40,90 T 50,85 T 60,88 T 70,95 T 80,90 T 90,88 T 100,85 T 110,88" 
+                              fill="none" stroke="#a855f7" strokeWidth="1.5" vectorEffect="non-scaling-stroke"
+                            />
+                          </g>
+                        </svg>
+                      </svg>
+                      {/* X-axis labels and ticks */}
+                      <div className="absolute top-full left-0 right-0 flex items-center justify-between">
+                        {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map((i) => (
+                          <div key={i} className="flex flex-col items-center w-0" style={{ left: `${(i / 11) * 100}%`, position: 'absolute' }}>
+                            <div className="w-[1px] h-1 bg-slate-300"></div>
+                            {i % 3 === 0 ? <span className="text-[10px] text-slate-500 mt-1">{i * 3}h</span> : <span className="text-[10px] text-slate-500 mt-1">&nbsp;</span>}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                    
+                    {/* Legend */}
+                    <div className="absolute right-0 top-1/2 -translate-y-1/2 flex flex-col gap-4 pl-4 border-l border-slate-100">
+                      <div className="flex items-start gap-2">
+                        <div className="w-3 h-3 bg-orange-500 mt-0.5 shrink-0 rounded-sm"></div>
+                        <div className="flex flex-col">
+                          <span className="text-[11px] font-bold text-slate-700">쿼리 수</span>
+                          <span className="text-[9px] text-slate-400">검색 및 조회 작업 추이</span>
+                        </div>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <div className="w-3 h-3 bg-purple-500 mt-0.5 shrink-0 rounded-sm"></div>
+                        <div className="flex flex-col">
+                          <span className="text-[11px] font-bold text-slate-700">분석 수</span>
+                          <span className="text-[9px] text-slate-400">AI 분석 작업 추이</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="mt-4 grid grid-cols-2 gap-4 border-t border-slate-100 pt-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-xl bg-emerald-100 flex items-center justify-center text-emerald-600">
+                        <Network className="w-5 h-5" />
+                      </div>
+                      <div className="flex flex-col">
+                        <span className="text-xl font-bold text-slate-800 leading-none">8</span>
+                        <span className="text-[11px] font-bold text-slate-500 mt-1">자동 관계 매핑</span>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-xl bg-orange-100 flex items-center justify-center text-orange-600">
+                        <Activity className="w-5 h-5" />
+                      </div>
+                      <div className="flex flex-col">
+                        <span className="text-xl font-bold text-slate-800 leading-none">81</span>
+                        <span className="text-[11px] font-bold text-slate-500 mt-1">비즈니스 가치</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* 온톨로지 개념 계층 */}
+              <div className="bg-[#fdf2f8] rounded-xl border border-[#fce7f3] p-5 flex flex-col mt-2 shadow-sm">
+                <h3 className="flex items-center gap-2 text-[15px] font-bold text-[#c026d3] mb-1">
+                  <Database className="w-4 h-4" /> 온톨로지 개념 계층
+                </h3>
+                <p className="text-[11px] text-slate-500 mb-4">AI가 자동으로 발견한 핵심 비즈니스 개념과 관계</p>
+                
+                <div className="bg-white/70 rounded-xl border border-slate-200 shadow-sm p-5 flex flex-col gap-4">
+                  <h4 className="text-[14px] font-bold text-blue-800">핵심 비즈니스 개념</h4>
+                  
+                  <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3">
+                    {[
+                      { name: '거래처', count: 7 }, { name: '품목', count: 5 }, { name: '주문', count: 9 }, { name: '직원', count: 10 }, { name: '구매', count: 3 },
+                      { name: '수출', count: 5 }, { name: '출고', count: 5 }, { name: '불량', count: 10 }, { name: '반품', count: 7 }
+                    ].map((item, i) => (
+                      <div key={i} className="bg-white rounded-lg border border-slate-200 p-3 shadow-sm hover:shadow-md transition-shadow flex flex-col" style={{ animation: `growUpAi 0.4s ease-out ${i * 0.05 + 0.5}s both` }}>
+                        <span className="text-[13px] font-bold text-slate-800 flex items-center gap-2">
+                          <Database className="w-3.5 h-3.5 text-blue-600" /> {item.name}
+                        </span>
+                        <span className="text-[11px] text-slate-500 mt-1">{item.count} 속성</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="bg-[#f0fdf4]/70 rounded-xl border border-[#bbf7d0] shadow-sm p-5 flex flex-col gap-4 mt-4">
+                  <h4 className="text-[14px] font-bold text-emerald-800">자동 발견된 관계</h4>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    {[
+                      { source: 'od_mst', target: 'cust_mst', type: 'foreign_key', score: 95 },
+                      { source: 'est_mst', target: 'cust_mst', type: 'foreign_key', score: 94 },
+                      { source: 'dg_mst', target: 'od_mst', type: 'foreign_key', score: 97 },
+                      { source: 't_pur_mst', target: 'cust_mst', type: 'foreign_key', score: 92 },
+                      { source: 't_exp_mst', target: 'cust_mst', type: 'foreign_key', score: 89 },
+                      { source: 'bad_mst', target: 'item_mst', type: 'foreign_key', score: 96 }
+                    ].map((rel, i) => (
+                      <div key={i} className="bg-white rounded-lg border border-slate-200 p-3 shadow-sm hover:shadow-md transition-shadow flex flex-col gap-2" style={{ animation: `growUpAi 0.4s ease-out ${i * 0.05 + 0.8}s both` }}>
+                        <div className="flex items-center gap-2 text-[12px] font-bold text-slate-800">
+                          <span className="px-1.5 py-0.5 bg-slate-100 rounded">{rel.source}</span>
+                          <span className="text-slate-400">→</span>
+                          <span className="px-1.5 py-0.5 bg-slate-100 rounded">{rel.target}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-[11px] text-slate-500 font-mono">( {rel.type} )</span>
+                          <span className="px-2 py-0.5 bg-blue-600 text-white text-[10px] font-bold rounded-full">{rel.score}%</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
             </div>
           )}
+
+        </div>
+      </div>
+    </div>
+  )
+}
 
           {activeTab === '테이블' && (
             <div className="flex flex-col gap-4">
