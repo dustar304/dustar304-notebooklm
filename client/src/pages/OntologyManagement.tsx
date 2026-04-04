@@ -239,31 +239,63 @@ export default function OntologyManagement() {
 
               {/* Chart SVG */}
               <svg className="w-[calc(100%-8rem)] h-[calc(100%-1.5rem)] absolute left-6 bottom-6 overflow-visible" preserveAspectRatio="none">
+                <style>
+                  {`
+                    @keyframes drawLine {
+                      from { stroke-dashoffset: 1000; }
+                      to { stroke-dashoffset: 0; }
+                    }
+                    @keyframes drawPoints {
+                      from { opacity: 0; transform: scale(0); }
+                      to { opacity: 1; transform: scale(1); }
+                    }
+                    .animated-line {
+                      stroke-dasharray: 1000;
+                      stroke-dashoffset: 1000;
+                      animation: drawLine 2s ease-in-out forwards;
+                    }
+                    .animated-point {
+                      opacity: 0;
+                      transform-origin: center;
+                      animation: drawPoints 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+                    }
+                  `}
+                </style>
+
                 {/* 전체 테이블 (보라색) */}
                 <polyline 
                   points="0,110 35,115 70,115 105,110 140,105 175,95 210,90 245,85 280,85 315,80 350,80 385,80" 
                   fill="none" stroke="#a855f7" strokeWidth="2" 
+                  className="animated-line"
                 />
                 {[110, 115, 115, 110, 105, 95, 90, 85, 85, 80, 80, 80].map((y, i) => (
-                  <circle key={`p1-${i}`} cx={i * 35} cy={y} r="3.5" fill="#a855f7" stroke="#fff" strokeWidth="1.5" />
+                  <circle key={`p1-${i}`} cx={i * 35} cy={y} r="3.5" fill="#a855f7" stroke="#fff" strokeWidth="1.5" 
+                    className="animated-point" style={{ animationDelay: `${(i * 35 / 385) * 2}s` }} 
+                  />
                 ))}
 
                 {/* 벡터화됨 (청록색) */}
                 <polyline 
                   points="0,140 35,130 70,125 105,130 140,135 175,130 210,130 245,120 280,125 315,125 350,120 385,120" 
                   fill="none" stroke="#06b6d4" strokeWidth="2" 
+                  className="animated-line" style={{ animationDelay: '0.2s' }}
                 />
                 {[140, 130, 125, 130, 135, 130, 130, 120, 125, 125, 120, 120].map((y, i) => (
-                  <circle key={`p2-${i}`} cx={i * 35} cy={y} r="3.5" fill="#06b6d4" stroke="#fff" strokeWidth="1.5" />
+                  <circle key={`p2-${i}`} cx={i * 35} cy={y} r="3.5" fill="#06b6d4" stroke="#fff" strokeWidth="1.5" 
+                    className="animated-point" style={{ animationDelay: `${(i * 35 / 385) * 2 + 0.2}s` }}
+                  />
                 ))}
 
                 {/* 관계 (오렌지색) */}
                 <polyline 
                   points="0,90 35,60 70,70 105,50 140,60 175,30 210,25 245,20 280,25 315,30 350,10 385,10" 
                   fill="none" stroke="#f97316" strokeWidth="2" 
+                  className="animated-line" style={{ animationDelay: '0.4s' }}
                 />
                 {[90, 60, 70, 50, 60, 30, 25, 20, 25, 30, 10, 10].map((y, i) => (
-                  <circle key={`p3-${i}`} cx={i * 35} cy={y} r="3.5" fill="#f97316" stroke="#fff" strokeWidth="1.5" />
+                  <circle key={`p3-${i}`} cx={i * 35} cy={y} r="3.5" fill="#f97316" stroke="#fff" strokeWidth="1.5" 
+                    className="animated-point" style={{ animationDelay: `${(i * 35 / 385) * 2 + 0.4}s` }}
+                  />
                 ))}
               </svg>
 
