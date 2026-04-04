@@ -162,9 +162,11 @@ export default function OntologyManagement() {
         </div>
 
         {/* Main Content Area */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-2">
+        <div className="flex flex-col gap-4 mt-2">
           
-          {/* 시스템 현황 */}
+          {activeTab === '개요' && (
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              {/* 시스템 현황 */}
           <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-5 flex flex-col gap-4">
             <h3 className="flex items-center gap-2 text-[14px] font-bold text-blue-600 border-b border-slate-100 pb-3">
               <TrendingUp className="w-4 h-4" /> 시스템 현황
@@ -191,8 +193,175 @@ export default function OntologyManagement() {
               </div>
             </div>
           </div>
+              
+          {/* 주의사항 */}
+          <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-5 flex flex-col gap-4">
+            <h3 className="flex items-center gap-2 text-[14px] font-bold text-amber-500 border-b border-slate-100 pb-3">
+              <AlertTriangle className="w-4 h-4" /> 주의사항
+            </h3>
+            
+            <div className="mt-2">
+              <div className="flex items-center justify-between p-4 bg-[#fffbeb] border border-[#fde047] rounded-xl shadow-sm">
+                <div className="flex flex-col gap-1">
+                  <span className="text-[14px] font-bold text-slate-800">반품 마스터</span>
+                  <span className="text-[12px] text-slate-500">데이터 품질 점검 필요</span>
+                </div>
+                <div className="px-2 py-1 bg-white border border-[#fde047] text-amber-600 font-bold text-[13px] rounded-lg shadow-sm">
+                  79.8%
+                </div>
+              </div>
+            </div>
+          </div>
 
-          {/* 테이블 벡터화 현황 */}
+              {/* 테이블 성장 추이 */}
+          <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-5 flex flex-col">
+            <h3 className="flex items-center gap-2 text-[14px] font-bold text-blue-600 mb-1">
+              <TrendingUp className="w-4 h-4" /> 테이블 성장 추이
+            </h3>
+            <p className="text-[10px] text-slate-400 mb-6">월별 테이블 수, 벡터화된 테이블 수, 관계 수의 변화 추이를 시계열로 표시합니다. 시간에 따른 온톨로지 확장 패턴을 확인할 수 있습니다.</p>
+            
+            <div className="flex-1 flex items-end relative min-h-[220px] px-8">
+              {/* Y-axis labels */}
+              <div className="absolute left-0 top-0 bottom-6 flex flex-col justify-between text-[10px] text-slate-400 pr-2 pb-2 h-full">
+                <span>140</span>
+                <span>105</span>
+                <span>70</span>
+                <span>35</span>
+                <span>0</span>
+              </div>
+              
+              {/* Grid lines */}
+              <div className="absolute left-6 right-32 top-0 bottom-6 flex flex-col justify-between h-full pointer-events-none">
+                {[0, 1, 2, 3, 4].map((i) => (
+                  <div key={i} className="w-full h-[1px] bg-slate-100"></div>
+                ))}
+              </div>
+
+              {/* Chart SVG */}
+              <svg className="w-[calc(100%-8rem)] h-[calc(100%-1.5rem)] absolute left-6 bottom-6 overflow-visible" preserveAspectRatio="none">
+                {/* 전체 테이블 (보라색) */}
+                <polyline 
+                  points="0,110 35,115 70,115 105,110 140,105 175,95 210,90 245,85 280,85 315,80 350,80 385,80" 
+                  fill="none" stroke="#a855f7" strokeWidth="2" 
+                />
+                {[110, 115, 115, 110, 105, 95, 90, 85, 85, 80, 80, 80].map((y, i) => (
+                  <circle key={`p1-${i}`} cx={i * 35} cy={y} r="3.5" fill="#a855f7" stroke="#fff" strokeWidth="1.5" />
+                ))}
+
+                {/* 벡터화됨 (청록색) */}
+                <polyline 
+                  points="0,140 35,130 70,125 105,130 140,135 175,130 210,130 245,120 280,125 315,125 350,120 385,120" 
+                  fill="none" stroke="#06b6d4" strokeWidth="2" 
+                />
+                {[140, 130, 125, 130, 135, 130, 130, 120, 125, 125, 120, 120].map((y, i) => (
+                  <circle key={`p2-${i}`} cx={i * 35} cy={y} r="3.5" fill="#06b6d4" stroke="#fff" strokeWidth="1.5" />
+                ))}
+
+                {/* 관계 (오렌지색) */}
+                <polyline 
+                  points="0,90 35,60 70,70 105,50 140,60 175,30 210,25 245,20 280,25 315,30 350,10 385,10" 
+                  fill="none" stroke="#f97316" strokeWidth="2" 
+                />
+                {[90, 60, 70, 50, 60, 30, 25, 20, 25, 30, 10, 10].map((y, i) => (
+                  <circle key={`p3-${i}`} cx={i * 35} cy={y} r="3.5" fill="#f97316" stroke="#fff" strokeWidth="1.5" />
+                ))}
+              </svg>
+
+              {/* X-axis labels */}
+              <div className="absolute left-6 right-32 bottom-0 flex justify-between text-[10px] text-slate-400">
+                <span>1월</span><span>2월</span><span>3월</span><span>4월</span>
+                <span>5월</span><span>6월</span><span>7월</span><span>8월</span>
+                <span>9월</span><span>10월</span><span>11월</span><span>12월</span>
+              </div>
+              
+              {/* Legend */}
+              <div className="absolute right-0 top-1/2 -translate-y-1/2 flex flex-col gap-4 pl-4 border-l border-slate-100">
+                <div className="flex items-start gap-2">
+                  <div className="w-3 h-3 bg-purple-500 mt-0.5 shrink-0"></div>
+                  <div className="flex flex-col">
+                    <span className="text-[11px] font-bold text-slate-700">전체 테이블</span>
+                    <span className="text-[9px] text-slate-400">데이터베이스의 전체 테이블 수</span>
+                  </div>
+                </div>
+                <div className="flex items-start gap-2">
+                  <div className="w-3 h-3 bg-cyan-500 mt-0.5 shrink-0"></div>
+                  <div className="flex flex-col">
+                    <span className="text-[11px] font-bold text-slate-700">벡터화됨</span>
+                    <span className="text-[9px] text-slate-400">AI 검색 가능한 테이블 수</span>
+                  </div>
+                </div>
+                <div className="flex items-start gap-2">
+                  <div className="w-3 h-3 bg-orange-500 mt-0.5 shrink-0"></div>
+                  <div className="flex flex-col">
+                    <span className="text-[11px] font-bold text-slate-700">관계</span>
+                    <span className="text-[9px] text-slate-400">테이블 간 발견된 관계 수</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+              {/* 관계 유형 분포 */}
+          <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-5 flex flex-col">
+            <h3 className="flex items-center gap-2 text-[14px] font-bold text-fuchsia-600 mb-1">
+              <Network className="w-4 h-4" /> 관계 유형 분포
+            </h3>
+            <p className="text-[10px] text-slate-400 mb-6">테이블 간 관계를 유형별로 분류하여 표시합니다. Foreign Key, Naming Pattern, Data Match, Inferred 등 각 관계 유형의 비율을 확인할 수 있습니다.</p>
+            
+            <div className="flex-1 flex items-center justify-center gap-12">
+              {/* Pie Chart (Conic Gradient) */}
+              <div className="relative w-48 h-48 rounded-full border-4 border-white shadow-lg flex-shrink-0"
+                   style={{
+                     background: 'conic-gradient(#a855f7 0% 45%, #0ea5e9 45% 75%, #f97316 75% 90%, #10b981 90% 100%)'
+                   }}>
+                {/* Inner white circle for donut effect, optional. Let's keep it pie as requested. */}
+                <div className="absolute inset-0 rounded-full bg-transparent border-4 border-white opacity-20"></div>
+                
+                {/* White separator lines using pseudo elements or just absolute divs */}
+                <div className="absolute top-0 left-1/2 w-[2px] h-1/2 bg-white origin-bottom -rotate-[0deg]"></div>
+                <div className="absolute top-0 left-1/2 w-[2px] h-1/2 bg-white origin-bottom rotate-[162deg]"></div>
+                <div className="absolute top-0 left-1/2 w-[2px] h-1/2 bg-white origin-bottom rotate-[270deg]"></div>
+                <div className="absolute top-0 left-1/2 w-[2px] h-1/2 bg-white origin-bottom rotate-[324deg]"></div>
+              </div>
+
+              {/* Legend */}
+              <div className="flex flex-col gap-4">
+                <div className="flex items-start gap-2">
+                  <div className="w-3 h-3 rounded-full bg-purple-500 mt-1 shrink-0"></div>
+                  <div className="flex flex-col">
+                    <span className="text-[12px] font-bold text-slate-800">Foreign Key <span className="text-slate-500 font-medium">(45개)</span></span>
+                    <span className="text-[10px] text-slate-400">스키마에 정의된 외래키 관계</span>
+                  </div>
+                </div>
+                <div className="flex items-start gap-2">
+                  <div className="w-3 h-3 rounded-full bg-cyan-500 mt-1 shrink-0"></div>
+                  <div className="flex flex-col">
+                    <span className="text-[12px] font-bold text-slate-800">Naming Pattern <span className="text-slate-500 font-medium">(30개)</span></span>
+                    <span className="text-[10px] text-slate-400">컬럼명 패턴으로 발견된 관계</span>
+                  </div>
+                </div>
+                <div className="flex items-start gap-2">
+                  <div className="w-3 h-3 rounded-full bg-orange-500 mt-1 shrink-0"></div>
+                  <div className="flex flex-col">
+                    <span className="text-[12px] font-bold text-slate-800">Data Match <span className="text-slate-500 font-medium">(15개)</span></span>
+                    <span className="text-[10px] text-slate-400">데이터 값 비교로 발견된 관계</span>
+                  </div>
+                </div>
+                <div className="flex items-start gap-2">
+                  <div className="w-3 h-3 rounded-full bg-emerald-500 mt-1 shrink-0"></div>
+                  <div className="flex flex-col">
+                    <span className="text-[12px] font-bold text-slate-800">Inferred <span className="text-slate-500 font-medium">(10개)</span></span>
+                    <span className="text-[10px] text-slate-400">AI가 추론한 관계</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+            </div>
+          )}
+
+          {activeTab === '테이블' && (
+            <div className="flex flex-col gap-4">
+              {/* 테이블 벡터화 현황 */}
           <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-5 flex flex-col lg:col-span-2">
             <h3 className="flex items-center gap-2 text-[14px] font-bold text-emerald-600 border-b border-slate-100 pb-3">
               <Database className="w-4 h-4" /> 테이블 벡터화 현황
@@ -572,152 +741,9 @@ export default function OntologyManagement() {
 
             </div>
           </div>
-
-          {/* 테이블 성장 추이 */}
-          <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-5 flex flex-col">
-            <h3 className="flex items-center gap-2 text-[14px] font-bold text-blue-600 mb-1">
-              <TrendingUp className="w-4 h-4" /> 테이블 성장 추이
-            </h3>
-            <p className="text-[10px] text-slate-400 mb-6">월별 테이블 수, 벡터화된 테이블 수, 관계 수의 변화 추이를 시계열로 표시합니다. 시간에 따른 온톨로지 확장 패턴을 확인할 수 있습니다.</p>
-            
-            <div className="flex-1 flex items-end relative min-h-[220px] px-8">
-              {/* Y-axis labels */}
-              <div className="absolute left-0 top-0 bottom-6 flex flex-col justify-between text-[10px] text-slate-400 pr-2 pb-2 h-full">
-                <span>140</span>
-                <span>105</span>
-                <span>70</span>
-                <span>35</span>
-                <span>0</span>
-              </div>
-              
-              {/* Grid lines */}
-              <div className="absolute left-6 right-32 top-0 bottom-6 flex flex-col justify-between h-full pointer-events-none">
-                {[0, 1, 2, 3, 4].map((i) => (
-                  <div key={i} className="w-full h-[1px] bg-slate-100"></div>
-                ))}
-              </div>
-
-              {/* Chart SVG */}
-              <svg className="w-[calc(100%-8rem)] h-[calc(100%-1.5rem)] absolute left-6 bottom-6 overflow-visible" preserveAspectRatio="none">
-                {/* 전체 테이블 (보라색) */}
-                <polyline 
-                  points="0,110 35,115 70,115 105,110 140,105 175,95 210,90 245,85 280,85 315,80 350,80 385,80" 
-                  fill="none" stroke="#a855f7" strokeWidth="2" 
-                />
-                {[110, 115, 115, 110, 105, 95, 90, 85, 85, 80, 80, 80].map((y, i) => (
-                  <circle key={`p1-${i}`} cx={i * 35} cy={y} r="3.5" fill="#a855f7" stroke="#fff" strokeWidth="1.5" />
-                ))}
-
-                {/* 벡터화됨 (청록색) */}
-                <polyline 
-                  points="0,140 35,130 70,125 105,130 140,135 175,130 210,130 245,120 280,125 315,125 350,120 385,120" 
-                  fill="none" stroke="#06b6d4" strokeWidth="2" 
-                />
-                {[140, 130, 125, 130, 135, 130, 130, 120, 125, 125, 120, 120].map((y, i) => (
-                  <circle key={`p2-${i}`} cx={i * 35} cy={y} r="3.5" fill="#06b6d4" stroke="#fff" strokeWidth="1.5" />
-                ))}
-
-                {/* 관계 (오렌지색) */}
-                <polyline 
-                  points="0,90 35,60 70,70 105,50 140,60 175,30 210,25 245,20 280,25 315,30 350,10 385,10" 
-                  fill="none" stroke="#f97316" strokeWidth="2" 
-                />
-                {[90, 60, 70, 50, 60, 30, 25, 20, 25, 30, 10, 10].map((y, i) => (
-                  <circle key={`p3-${i}`} cx={i * 35} cy={y} r="3.5" fill="#f97316" stroke="#fff" strokeWidth="1.5" />
-                ))}
-              </svg>
-
-              {/* X-axis labels */}
-              <div className="absolute left-6 right-32 bottom-0 flex justify-between text-[10px] text-slate-400">
-                <span>1월</span><span>2월</span><span>3월</span><span>4월</span>
-                <span>5월</span><span>6월</span><span>7월</span><span>8월</span>
-                <span>9월</span><span>10월</span><span>11월</span><span>12월</span>
-              </div>
-              
-              {/* Legend */}
-              <div className="absolute right-0 top-1/2 -translate-y-1/2 flex flex-col gap-4 pl-4 border-l border-slate-100">
-                <div className="flex items-start gap-2">
-                  <div className="w-3 h-3 bg-purple-500 mt-0.5 shrink-0"></div>
-                  <div className="flex flex-col">
-                    <span className="text-[11px] font-bold text-slate-700">전체 테이블</span>
-                    <span className="text-[9px] text-slate-400">데이터베이스의 전체 테이블 수</span>
-                  </div>
-                </div>
-                <div className="flex items-start gap-2">
-                  <div className="w-3 h-3 bg-cyan-500 mt-0.5 shrink-0"></div>
-                  <div className="flex flex-col">
-                    <span className="text-[11px] font-bold text-slate-700">벡터화됨</span>
-                    <span className="text-[9px] text-slate-400">AI 검색 가능한 테이블 수</span>
-                  </div>
-                </div>
-                <div className="flex items-start gap-2">
-                  <div className="w-3 h-3 bg-orange-500 mt-0.5 shrink-0"></div>
-                  <div className="flex flex-col">
-                    <span className="text-[11px] font-bold text-slate-700">관계</span>
-                    <span className="text-[9px] text-slate-400">테이블 간 발견된 관계 수</span>
-                  </div>
-                </div>
-              </div>
             </div>
-          </div>
+          )}
 
-          {/* 관계 유형 분포 */}
-          <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-5 flex flex-col">
-            <h3 className="flex items-center gap-2 text-[14px] font-bold text-fuchsia-600 mb-1">
-              <Network className="w-4 h-4" /> 관계 유형 분포
-            </h3>
-            <p className="text-[10px] text-slate-400 mb-6">테이블 간 관계를 유형별로 분류하여 표시합니다. Foreign Key, Naming Pattern, Data Match, Inferred 등 각 관계 유형의 비율을 확인할 수 있습니다.</p>
-            
-            <div className="flex-1 flex items-center justify-center gap-12">
-              {/* Pie Chart (Conic Gradient) */}
-              <div className="relative w-48 h-48 rounded-full border-4 border-white shadow-lg flex-shrink-0"
-                   style={{
-                     background: 'conic-gradient(#a855f7 0% 45%, #0ea5e9 45% 75%, #f97316 75% 90%, #10b981 90% 100%)'
-                   }}>
-                {/* Inner white circle for donut effect, optional. Let's keep it pie as requested. */}
-                <div className="absolute inset-0 rounded-full bg-transparent border-4 border-white opacity-20"></div>
-                
-                {/* White separator lines using pseudo elements or just absolute divs */}
-                <div className="absolute top-0 left-1/2 w-[2px] h-1/2 bg-white origin-bottom -rotate-[0deg]"></div>
-                <div className="absolute top-0 left-1/2 w-[2px] h-1/2 bg-white origin-bottom rotate-[162deg]"></div>
-                <div className="absolute top-0 left-1/2 w-[2px] h-1/2 bg-white origin-bottom rotate-[270deg]"></div>
-                <div className="absolute top-0 left-1/2 w-[2px] h-1/2 bg-white origin-bottom rotate-[324deg]"></div>
-              </div>
-
-              {/* Legend */}
-              <div className="flex flex-col gap-4">
-                <div className="flex items-start gap-2">
-                  <div className="w-3 h-3 rounded-full bg-purple-500 mt-1 shrink-0"></div>
-                  <div className="flex flex-col">
-                    <span className="text-[12px] font-bold text-slate-800">Foreign Key <span className="text-slate-500 font-medium">(45개)</span></span>
-                    <span className="text-[10px] text-slate-400">스키마에 정의된 외래키 관계</span>
-                  </div>
-                </div>
-                <div className="flex items-start gap-2">
-                  <div className="w-3 h-3 rounded-full bg-cyan-500 mt-1 shrink-0"></div>
-                  <div className="flex flex-col">
-                    <span className="text-[12px] font-bold text-slate-800">Naming Pattern <span className="text-slate-500 font-medium">(30개)</span></span>
-                    <span className="text-[10px] text-slate-400">컬럼명 패턴으로 발견된 관계</span>
-                  </div>
-                </div>
-                <div className="flex items-start gap-2">
-                  <div className="w-3 h-3 rounded-full bg-orange-500 mt-1 shrink-0"></div>
-                  <div className="flex flex-col">
-                    <span className="text-[12px] font-bold text-slate-800">Data Match <span className="text-slate-500 font-medium">(15개)</span></span>
-                    <span className="text-[10px] text-slate-400">데이터 값 비교로 발견된 관계</span>
-                  </div>
-                </div>
-                <div className="flex items-start gap-2">
-                  <div className="w-3 h-3 rounded-full bg-emerald-500 mt-1 shrink-0"></div>
-                  <div className="flex flex-col">
-                    <span className="text-[12px] font-bold text-slate-800">Inferred <span className="text-slate-500 font-medium">(10개)</span></span>
-                    <span className="text-[10px] text-slate-400">AI가 추론한 관계</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          
         </div>
       </div>
     </div>
