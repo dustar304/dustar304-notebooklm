@@ -75,16 +75,23 @@ const Home = () => {
         {/* ── 헤더 ── */}
         <div className="relative text-center mb-8 sm:mb-12 py-16 sm:py-24 rounded-3xl overflow-hidden shadow-[0_0_40px_rgba(0,0,0,0.5)] border border-slate-800 bg-slate-900">
           {/* 동영상 배경 (자동 재생 및 마우스 호버 시 재생 보장) */}
-          <div className="absolute inset-0 z-0 w-full h-full">
+          <div 
+            className="absolute inset-0 z-0 w-full h-full"
+            onMouseEnter={(e) => {
+              const video = e.currentTarget.querySelector('video')
+              if (video) video.play().catch(() => {})
+            }}
+          >
             <video 
               src={waveVideo} 
               type="video/mp4"
-              className="w-full h-full object-cover opacity-80 mix-blend-screen"
+              className="w-full h-full object-cover opacity-80 mix-blend-screen pointer-events-none"
               autoPlay
               muted
               loop
               playsInline
-              onMouseEnter={(e) => e.currentTarget.play()}
+              disablePictureInPicture
+              disableRemotePlayback
             />
             {/* 영상 위에 약간의 오버레이 추가 (가독성을 위해) */}
             <div className="absolute inset-0 bg-slate-950/40 pointer-events-none"></div>
