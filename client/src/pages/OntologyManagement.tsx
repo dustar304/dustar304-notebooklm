@@ -611,8 +611,8 @@ export default function OntologyManagement() {
                   
                   <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3">
                     {[
-                      { name: '거래처', count: 7 }, { name: '품목', count: 5 }, { name: '주문', count: 9 }, { name: '직원', count: 10 }, { name: '구매', count: 3 },
-                      { name: '수출', count: 5 }, { name: '출고', count: 5 }, { name: '불량', count: 10 }, { name: '반품', count: 7 }
+                      { name: '거래처', count: 10 }, { name: '품목', count: 6 }, { name: '주문', count: 4 }, { name: '직원', count: 6 }, { name: '구매', count: 5 },
+                      { name: '수출', count: 10 }, { name: '출고', count: 7 }, { name: '불량', count: 3 }, { name: '반품', count: 4 }
                     ].map((item, i) => (
                       <div key={i} className="bg-white rounded-lg border border-slate-200 p-3 shadow-sm hover:shadow-md transition-shadow flex flex-col" style={{ animation: `growUpAi 0.4s ease-out ${i * 0.05 + 0.5}s both` }}>
                         <span className="text-[13px] font-bold text-slate-800 flex items-center gap-2">
