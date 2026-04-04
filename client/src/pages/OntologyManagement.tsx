@@ -447,6 +447,14 @@ export default function OntologyManagement() {
                       </div>
 
                       {/* Bar Chart Bars */}
+                      <style>
+                        {`
+                          @keyframes growUp {
+                            from { transform: scaleY(0); opacity: 0; }
+                            to { transform: scaleY(1); opacity: 1; }
+                          }
+                        `}
+                      </style>
                       <div className="absolute inset-0 flex items-end justify-between px-2">
                         {[
                           [50, 30], [55, 30], [48, 35], [58, 40], [50, 45], [60, 40],
@@ -532,7 +540,15 @@ export default function OntologyManagement() {
                       </div>
 
                       {/* Area Chart SVG & X-axis labels */}
-                      <div className="absolute inset-0">
+                      <style>
+                        {`
+                          @keyframes revealRight {
+                            from { clip-path: inset(0 100% 0 0); }
+                            to { clip-path: inset(0 0 0 0); }
+                          }
+                        `}
+                      </style>
+                      <div className="absolute inset-0" style={{ animation: 'revealRight 1.5s cubic-bezier(0.25, 1, 0.5, 1) forwards' }}>
                         <svg className="w-full h-full overflow-visible" preserveAspectRatio="none">
                           <defs>
                             <linearGradient id="gradientTable3" x1="0%" y1="0%" x2="0%" y2="100%">
