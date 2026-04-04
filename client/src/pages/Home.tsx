@@ -106,10 +106,10 @@ const Home = () => {
 
             <h1 className="text-4xl sm:text-6xl font-extrabold text-white tracking-tight mb-6 drop-shadow-lg leading-tight">
               제조 AI 데이터분석
-              <br className="sm:hidden" />
-              <span className="text-cyan-400 drop-shadow-[0_0_12px_rgba(34,211,238,0.8)] sm:ml-4">스마트팩토리 실습</span>
+              <br />
+              <span className="text-cyan-400 drop-shadow-[0_0_12px_rgba(34,211,238,0.8)] mt-2 inline-block">스마트팩토리 실습</span>
             </h1>
-            <p className="text-slate-300 text-base sm:text-lg max-w-3xl mx-auto leading-relaxed font-medium bg-slate-900/60 backdrop-blur-xl p-5 sm:p-6 rounded-3xl inline-block border border-white/10 shadow-[0_4px_24px_-8px_rgba(0,0,0,0.5)]">
+            <p className="text-slate-300 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed font-medium bg-slate-900/60 backdrop-blur-xl p-4 rounded-2xl inline-block border border-white/10 shadow-[0_4px_24px_-8px_rgba(0,0,0,0.5)]">
               AI 비전 불량 검사 · MES 작업실적 관리 · 생산 대시보드부터<br className="hidden sm:block"/>
               PDF 문서 편집·AI 동영상 제작까지 통합 실습 환경을 제공합니다
             </p>
