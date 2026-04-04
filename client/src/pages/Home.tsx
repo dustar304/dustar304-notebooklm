@@ -70,10 +70,10 @@ const Home = () => {
 
   return (
     <div className="flex-1 overflow-auto bg-slate-950">
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
+      <div className="max-w-none mx-auto">
 
         {/* ── 헤더 ── */}
-        <div className="relative text-center mb-8 sm:mb-12 py-16 sm:py-24 rounded-3xl overflow-hidden shadow-[0_0_40px_rgba(0,0,0,0.5)] border border-slate-800 bg-slate-900">
+        <div className="relative text-center mb-8 sm:mb-12 py-24 sm:py-32 overflow-hidden shadow-[0_0_40px_rgba(0,0,0,0.5)] border-b border-slate-800 bg-slate-900 w-full min-h-[600px] flex flex-col justify-center">
           {/* 동영상 배경 (자동 재생 및 마우스 호버 시 재생 보장) */}
           <div 
             className="absolute inset-0 z-0 w-full h-full"
@@ -94,42 +94,44 @@ const Home = () => {
               disableRemotePlayback
             />
             {/* 영상 위에 약간의 오버레이 추가 (가독성을 위해) */}
-            <div className="absolute inset-0 bg-slate-950/40 pointer-events-none"></div>
+            <div className="absolute inset-0 bg-slate-950/40 pointer-events-none w-full h-full"></div>
           </div>
 
-          <div className="relative z-10 px-4">
+          <div className="relative z-10 px-4 w-full">
             {/* 기관 배지 */}
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 backdrop-blur-md border border-blue-400/30 text-blue-300 text-xs font-bold mb-3 sm:mb-4 shadow-[0_0_15px_rgba(59,130,246,0.3)]">
-              <Award className="w-3.5 h-3.5 text-blue-400" />
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-500/10 backdrop-blur-md border border-blue-400/30 text-blue-300 text-sm font-bold mb-4 sm:mb-6 shadow-[0_0_15px_rgba(59,130,246,0.3)]">
+              <Award className="w-4 h-4 text-blue-400" />
               한국 품질재단 (KFQ) 공식 실습 플랫폼
             </div>
 
-            <h1 className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight mb-4 drop-shadow-lg">
+            <h1 className="text-4xl sm:text-6xl font-extrabold text-white tracking-tight mb-6 drop-shadow-lg leading-tight">
               제조 AI 데이터분석
-              <span className="text-cyan-400 drop-shadow-[0_0_12px_rgba(34,211,238,0.8)] ml-2">스마트팩토리 실습</span>
+              <br className="sm:hidden" />
+              <span className="text-cyan-400 drop-shadow-[0_0_12px_rgba(34,211,238,0.8)] sm:ml-4">스마트팩토리 실습</span>
             </h1>
-            <p className="text-slate-300 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed font-medium bg-slate-900/60 backdrop-blur-xl p-4 rounded-3xl inline-block border border-white/10 shadow-[0_4px_24px_-8px_rgba(0,0,0,0.5)]">
+            <p className="text-slate-300 text-base sm:text-lg max-w-3xl mx-auto leading-relaxed font-medium bg-slate-900/60 backdrop-blur-xl p-5 sm:p-6 rounded-3xl inline-block border border-white/10 shadow-[0_4px_24px_-8px_rgba(0,0,0,0.5)]">
               AI 비전 불량 검사 · MES 작업실적 관리 · 생산 대시보드부터<br className="hidden sm:block"/>
               PDF 문서 편집·AI 동영상 제작까지 통합 실습 환경을 제공합니다
             </p>
 
             {/* 통계 뱃지 */}
-            <div className="flex items-center justify-center gap-4 mt-8 flex-wrap">
+            <div className="flex items-center justify-center gap-4 sm:gap-6 mt-10 flex-wrap">
               {[
                 { label: '실습 모듈', value: '6개' },
                 { label: 'AI 기능', value: '10+' },
                 { label: '스마트팩토리', value: '4종' },
               ].map((stat) => (
-                <div key={stat.label} className="flex items-center gap-2 px-5 py-2.5 bg-white/5 backdrop-blur-md rounded-2xl border border-white/10 shadow-[0_4px_24px_-8px_rgba(0,0,0,0.5)] hover:border-white/20 transition-all">
-                  <span className="text-cyan-400 font-black text-lg drop-shadow-[0_0_8px_rgba(34,211,238,0.5)]">{stat.value}</span>
-                  <span className="text-slate-400 text-sm font-semibold">{stat.label}</span>
+                <div key={stat.label} className="flex items-center gap-3 px-6 py-3 bg-white/5 backdrop-blur-md rounded-2xl border border-white/10 shadow-[0_4px_24px_-8px_rgba(0,0,0,0.5)] hover:border-white/20 transition-all">
+                  <span className="text-cyan-400 font-black text-xl drop-shadow-[0_0_8px_rgba(34,211,238,0.5)]">{stat.value}</span>
+                  <span className="text-slate-400 text-base font-semibold">{stat.label}</span>
                 </div>
               ))}
             </div>
           </div>
         </div>
 
-        {/* ── 제조 AI 스마트팩토리 실습 섹션 ── */}
+        <div className="max-w-5xl mx-auto px-4 sm:px-6">
+          {/* ── 제조 AI 스마트팩토리 실습 섹션 ── */}
         <div className="mb-8 sm:mb-12">
           <div className="flex items-center gap-2 mb-4 sm:mb-6 px-1">
             <div className="w-8 h-8 bg-slate-800 rounded-xl flex items-center justify-center shrink-0 border border-slate-700 shadow-[0_0_10px_rgba(0,0,0,0.5)]">
