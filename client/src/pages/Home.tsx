@@ -99,8 +99,8 @@ const Home = () => {
 
           <div className="relative z-10 px-4 w-full">
             {/* 기관 배지 */}
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-500/10 backdrop-blur-md border border-blue-400/30 text-blue-300 text-sm font-bold mb-4 sm:mb-6 shadow-[0_0_15px_rgba(59,130,246,0.3)]">
-              <Award className="w-4 h-4 text-blue-400" />
+            <div className="inline-flex items-center gap-2.5 px-5 py-2 rounded-full bg-blue-500/10 backdrop-blur-md border border-blue-400/30 text-blue-300 text-base sm:text-lg font-bold mb-4 sm:mb-6 shadow-[0_0_15px_rgba(59,130,246,0.3)]">
+              <Award className="w-5 h-5 text-blue-400" />
               한국 품질재단 (KFQ) 공식 실습 플랫폼
             </div>
 
