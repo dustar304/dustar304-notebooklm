@@ -196,6 +196,7 @@ const Home = () => {
         </div>
 
       </div>
+      </div>
       <div className="border-t border-white/10 bg-slate-950">
         <Footer />
       </div>
