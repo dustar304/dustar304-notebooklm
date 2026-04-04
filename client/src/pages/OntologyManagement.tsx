@@ -78,7 +78,7 @@ export default function OntologyManagement() {
             <div className="flex-1 flex flex-col items-center justify-center relative">
               <Database className="absolute left-4 bottom-3 w-8 h-8 text-blue-100" />
               <div className="flex flex-col items-center leading-none mt-1">
-                <span className="text-3xl font-bold text-blue-600">1056</span>
+                <span className="text-3xl font-bold text-blue-600">10</span>
                 <span className="text-[11px] text-slate-500 font-medium mt-1">개</span>
               </div>
             </div>
@@ -92,7 +92,7 @@ export default function OntologyManagement() {
             <div className="flex-1 flex flex-col items-center justify-center relative">
               <Zap className="absolute left-4 bottom-3 w-8 h-8 text-slate-100" />
               <div className="flex flex-col items-center leading-none mt-1">
-                <span className="text-3xl font-bold text-[#c026d3]">206</span>
+                <span className="text-3xl font-bold text-[#c026d3]">7</span>
                 <span className="text-[11px] text-slate-500 font-medium mt-1">개</span>
               </div>
             </div>
@@ -106,7 +106,7 @@ export default function OntologyManagement() {
             <div className="flex-1 flex flex-col items-center justify-center relative">
               <Shield className="absolute left-4 bottom-3 w-8 h-8 text-amber-200/60" />
               <div className="flex flex-col items-center leading-none mt-1">
-                <span className="text-3xl font-bold text-[#059669]">80.4%</span>
+                <span className="text-3xl font-bold text-[#059669]">90.5%</span>
                 <span className="text-[11px] text-slate-500 font-medium mt-1">평균</span>
               </div>
             </div>
@@ -120,7 +120,7 @@ export default function OntologyManagement() {
             <div className="flex-1 flex flex-col items-center justify-center relative">
               <Network className="absolute left-4 bottom-3 w-8 h-8 text-slate-100" />
               <div className="flex flex-col items-center leading-none mt-1">
-                <span className="text-3xl font-bold text-[#ea580c]">0</span>
+                <span className="text-3xl font-bold text-[#ea580c]">8</span>
                 <span className="text-[11px] text-slate-500 font-medium mt-1">개</span>
               </div>
             </div>
@@ -192,20 +192,384 @@ export default function OntologyManagement() {
             </div>
           </div>
 
-          {/* 주의사항 */}
-          <div className="bg-[#fffbeb] rounded-xl border border-[#fef08a] shadow-sm p-5 flex flex-col gap-4">
-            <h3 className="flex items-center gap-2 text-[14px] font-bold text-amber-600 border-b border-amber-100 pb-3">
-              <AlertTriangle className="w-4 h-4" /> 주의사항
+          {/* 테이블 벡터화 현황 */}
+          <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-5 flex flex-col lg:col-span-2">
+            <h3 className="flex items-center gap-2 text-[14px] font-bold text-emerald-600 border-b border-slate-100 pb-3">
+              <Database className="w-4 h-4" /> 테이블 벡터화 현황
             </h3>
             
-            <div className="mt-2 bg-white rounded-lg border border-yellow-200 p-4 flex items-center justify-between shadow-sm">
-              <div className="flex flex-col">
-                <span className="text-[14px] font-bold text-slate-800">반품 마스터</span>
-                <span className="text-[12px] text-slate-500 mt-1">데이터 품질 점검 필요</span>
+            <div className="mt-4 flex items-center justify-between gap-4 mb-4">
+              <div className="relative flex-1 max-w-sm">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                </div>
+                <input type="text" className="w-full bg-slate-50 border border-slate-200 text-slate-700 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block pl-10 p-2 outline-none transition-colors" placeholder="테이블 검색..." />
               </div>
-              <div className="px-3 py-1 rounded-full bg-yellow-100 text-yellow-700 text-[12px] font-bold border border-yellow-200">
-                79.8%
+              <div className="flex gap-2">
+                <select className="bg-white border border-slate-200 text-slate-700 text-sm font-medium rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2 outline-none shadow-sm cursor-pointer hover:bg-slate-50">
+                  <option>모든 테이블</option>
+                  <option>벡터화됨</option>
+                  <option>미완료</option>
+                </select>
+                <button className="flex items-center gap-2 bg-white border border-slate-200 text-slate-700 text-sm font-medium rounded-lg p-2 hover:bg-slate-50 shadow-sm transition-colors">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path></svg> 필터
+                </button>
               </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+              
+              {/* 반품 마스터 */}
+              <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow flex flex-col">
+                <div className="flex items-start gap-3 p-4 bg-slate-50/50 border-b border-slate-100">
+                  <div className="w-8 h-8 rounded bg-indigo-600 text-white flex items-center justify-center font-bold text-sm shrink-0 shadow-sm">R</div>
+                  <div className="flex flex-col">
+                    <span className="text-[14px] font-bold text-indigo-700 leading-tight">반품 마스터</span>
+                    <span className="text-[11px] text-slate-500 font-mono mt-0.5">return_mst</span>
+                  </div>
+                </div>
+                <div className="p-4 flex-1 flex flex-col gap-4">
+                  <span className="text-[11px] text-slate-500">제품 반품 관리</span>
+                  <div className="flex items-center justify-center gap-8">
+                    <div className="text-center">
+                      <span className="block text-[16px] font-bold text-slate-800">580</span>
+                      <span className="block text-[10px] text-slate-400">레코드</span>
+                    </div>
+                    <div className="text-center">
+                      <span className="block text-[16px] font-bold text-slate-800">4</span>
+                      <span className="block text-[10px] text-slate-400">컬럼</span>
+                    </div>
+                  </div>
+                  <div className="mt-auto flex flex-col gap-1">
+                    <div className="flex justify-between items-center text-[10px] font-bold">
+                      <span className="text-slate-500">데이터 품질</span>
+                      <span className="text-amber-500">79.8%</span>
+                    </div>
+                    <div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                      <div className="h-full bg-blue-600 w-[79.8%]"></div>
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between mt-1">
+                    <span className="px-2 py-0.5 rounded-full border border-slate-200 text-[10px] font-bold text-slate-500">dbo</span>
+                    <span className="text-[10px] text-slate-400">3일 전</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* 주문 마스터 */}
+              <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow flex flex-col">
+                <div className="flex items-start gap-3 p-4 bg-slate-50/50 border-b border-slate-100">
+                  <div className="w-8 h-8 rounded bg-purple-600 text-white flex items-center justify-center font-bold text-sm shrink-0 shadow-sm">O</div>
+                  <div className="flex flex-col">
+                    <span className="text-[14px] font-bold text-purple-700 leading-tight">주문 마스터</span>
+                    <span className="text-[11px] text-slate-500 font-mono mt-0.5">od_mst</span>
+                  </div>
+                </div>
+                <div className="p-4 flex-1 flex flex-col gap-4">
+                  <span className="text-[11px] text-slate-500">고객 주문 정보 관리</span>
+                  <div className="flex items-center justify-center gap-8">
+                    <div className="text-center">
+                      <span className="block text-[16px] font-bold text-slate-800">5,680</span>
+                      <span className="block text-[10px] text-slate-400">레코드</span>
+                    </div>
+                    <div className="text-center">
+                      <span className="block text-[16px] font-bold text-slate-800">4</span>
+                      <span className="block text-[10px] text-slate-400">컬럼</span>
+                    </div>
+                  </div>
+                  <div className="mt-auto flex flex-col gap-1">
+                    <div className="flex justify-between items-center text-[10px] font-bold">
+                      <span className="text-slate-500">데이터 품질</span>
+                      <span className="text-emerald-500">96.7%</span>
+                    </div>
+                    <div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                      <div className="h-full bg-blue-600 w-[96.7%]"></div>
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between mt-1">
+                    <div className="flex gap-1.5">
+                      <span className="flex items-center gap-1 px-2 py-0.5 rounded-full border border-emerald-200 bg-emerald-50 text-[10px] font-bold text-emerald-600"><Zap className="w-3 h-3 fill-emerald-600" /> 벡터화됨</span>
+                      <span className="px-2 py-0.5 rounded-full border border-slate-200 text-[10px] font-bold text-slate-500">dbo</span>
+                    </div>
+                    <span className="text-[10px] text-slate-400">0일 전</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* 견적 마스터 */}
+              <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow flex flex-col">
+                <div className="flex items-start gap-3 p-4 bg-slate-50/50 border-b border-slate-100">
+                  <div className="w-8 h-8 rounded bg-cyan-600 text-white flex items-center justify-center font-bold text-sm shrink-0 shadow-sm">E</div>
+                  <div className="flex flex-col">
+                    <span className="text-[14px] font-bold text-cyan-700 leading-tight">견적 마스터</span>
+                    <span className="text-[11px] text-slate-500 font-mono mt-0.5">est_mst</span>
+                  </div>
+                </div>
+                <div className="p-4 flex-1 flex flex-col gap-4">
+                  <span className="text-[11px] text-slate-500">견적서 관리</span>
+                  <div className="flex items-center justify-center gap-8">
+                    <div className="text-center">
+                      <span className="block text-[16px] font-bold text-slate-800">2,340</span>
+                      <span className="block text-[10px] text-slate-400">레코드</span>
+                    </div>
+                    <div className="text-center">
+                      <span className="block text-[16px] font-bold text-slate-800">4</span>
+                      <span className="block text-[10px] text-slate-400">컬럼</span>
+                    </div>
+                  </div>
+                  <div className="mt-auto flex flex-col gap-1">
+                    <div className="flex justify-between items-center text-[10px] font-bold">
+                      <span className="text-slate-500">데이터 품질</span>
+                      <span className="text-emerald-500">90.3%</span>
+                    </div>
+                    <div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                      <div className="h-full bg-blue-600 w-[90.3%]"></div>
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between mt-1">
+                    <div className="flex gap-1.5">
+                      <span className="flex items-center gap-1 px-2 py-0.5 rounded-full border border-emerald-200 bg-emerald-50 text-[10px] font-bold text-emerald-600"><Zap className="w-3 h-3 fill-emerald-600" /> 벡터화됨</span>
+                      <span className="px-2 py-0.5 rounded-full border border-slate-200 text-[10px] font-bold text-slate-500">dbo</span>
+                    </div>
+                    <span className="text-[10px] text-slate-400">1일 전</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* 구매 마스터 */}
+              <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow flex flex-col">
+                <div className="flex items-start gap-3 p-4 bg-slate-50/50 border-b border-slate-100">
+                  <div className="w-8 h-8 rounded bg-rose-600 text-white flex items-center justify-center font-bold text-sm shrink-0 shadow-sm">T</div>
+                  <div className="flex flex-col">
+                    <span className="text-[14px] font-bold text-rose-700 leading-tight">구매 마스터</span>
+                    <span className="text-[11px] text-slate-500 font-mono mt-0.5">t_pur_mst</span>
+                  </div>
+                </div>
+                <div className="p-4 flex-1 flex flex-col gap-4">
+                  <span className="text-[11px] text-slate-500">구매 발주 관리</span>
+                  <div className="flex items-center justify-center gap-8">
+                    <div className="text-center">
+                      <span className="block text-[16px] font-bold text-slate-800">3,920</span>
+                      <span className="block text-[10px] text-slate-400">레코드</span>
+                    </div>
+                    <div className="text-center">
+                      <span className="block text-[16px] font-bold text-slate-800">4</span>
+                      <span className="block text-[10px] text-slate-400">컬럼</span>
+                    </div>
+                  </div>
+                  <div className="mt-auto flex flex-col gap-1">
+                    <div className="flex justify-between items-center text-[10px] font-bold">
+                      <span className="text-slate-500">데이터 품질</span>
+                      <span className="text-emerald-500">94.9%</span>
+                    </div>
+                    <div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                      <div className="h-full bg-blue-600 w-[94.9%]"></div>
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between mt-1">
+                    <div className="flex gap-1.5">
+                      <span className="flex items-center gap-1 px-2 py-0.5 rounded-full border border-emerald-200 bg-emerald-50 text-[10px] font-bold text-emerald-600"><Zap className="w-3 h-3 fill-emerald-600" /> 벡터화됨</span>
+                      <span className="px-2 py-0.5 rounded-full border border-slate-200 text-[10px] font-bold text-slate-500">dbo</span>
+                    </div>
+                    <span className="text-[10px] text-slate-400">0일 전</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* 거래처 마스터 */}
+              <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow flex flex-col">
+                <div className="flex items-start gap-3 p-4 bg-slate-50/50 border-b border-slate-100">
+                  <div className="w-8 h-8 rounded bg-blue-600 text-white flex items-center justify-center font-bold text-sm shrink-0 shadow-sm">C</div>
+                  <div className="flex flex-col">
+                    <span className="text-[14px] font-bold text-blue-700 leading-tight">거래처 마스터</span>
+                    <span className="text-[11px] text-slate-500 font-mono mt-0.5">cust_mst</span>
+                  </div>
+                </div>
+                <div className="p-4 flex-1 flex flex-col gap-4">
+                  <span className="text-[11px] text-slate-500">고객 및 공급업체 정보</span>
+                  <div className="flex items-center justify-center gap-8">
+                    <div className="text-center">
+                      <span className="block text-[16px] font-bold text-slate-800">1,250</span>
+                      <span className="block text-[10px] text-slate-400">레코드</span>
+                    </div>
+                    <div className="text-center">
+                      <span className="block text-[16px] font-bold text-slate-800">4</span>
+                      <span className="block text-[10px] text-slate-400">컬럼</span>
+                    </div>
+                  </div>
+                  <div className="mt-auto flex flex-col gap-1">
+                    <div className="flex justify-between items-center text-[10px] font-bold">
+                      <span className="text-slate-500">데이터 품질</span>
+                      <span className="text-blue-500">90.6%</span>
+                    </div>
+                    <div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                      <div className="h-full bg-blue-600 w-[90.6%]"></div>
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between mt-1">
+                    <div className="flex gap-1.5">
+                      <span className="flex items-center gap-1 px-2 py-0.5 rounded-full border border-emerald-200 bg-emerald-50 text-[10px] font-bold text-emerald-600"><Zap className="w-3 h-3 fill-emerald-600" /> 벡터화됨</span>
+                      <span className="px-2 py-0.5 rounded-full border border-slate-200 text-[10px] font-bold text-slate-500">dbo</span>
+                    </div>
+                    <span className="text-[10px] text-slate-400">2일 전</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* 수출 마스터 */}
+              <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow flex flex-col">
+                <div className="flex items-start gap-3 p-4 bg-slate-50/50 border-b border-slate-100">
+                  <div className="w-8 h-8 rounded bg-teal-500 text-white flex items-center justify-center font-bold text-sm shrink-0 shadow-sm">T</div>
+                  <div className="flex flex-col">
+                    <span className="text-[14px] font-bold text-teal-600 leading-tight">수출 마스터</span>
+                    <span className="text-[11px] text-slate-500 font-mono mt-0.5">t_exp_mst</span>
+                  </div>
+                </div>
+                <div className="p-4 flex-1 flex flex-col gap-4">
+                  <span className="text-[11px] text-slate-500">수출 관리</span>
+                  <div className="flex items-center justify-center gap-8">
+                    <div className="text-center">
+                      <span className="block text-[16px] font-bold text-slate-800">890</span>
+                      <span className="block text-[10px] text-slate-400">레코드</span>
+                    </div>
+                    <div className="text-center">
+                      <span className="block text-[16px] font-bold text-slate-800">4</span>
+                      <span className="block text-[10px] text-slate-400">컬럼</span>
+                    </div>
+                  </div>
+                  <div className="mt-auto flex flex-col gap-1">
+                    <div className="flex justify-between items-center text-[10px] font-bold">
+                      <span className="text-slate-500">데이터 품질</span>
+                      <span className="text-amber-500">88.3%</span>
+                    </div>
+                    <div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                      <div className="h-full bg-blue-600 w-[88.3%]"></div>
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between mt-1">
+                    <div className="flex gap-1.5">
+                      <span className="flex items-center gap-1 px-2 py-0.5 rounded-full border border-emerald-200 bg-emerald-50 text-[10px] font-bold text-emerald-600"><Zap className="w-3 h-3 fill-emerald-600" /> 벡터화됨</span>
+                      <span className="px-2 py-0.5 rounded-full border border-slate-200 text-[10px] font-bold text-slate-500">dbo</span>
+                    </div>
+                    <span className="text-[10px] text-slate-400">2일 전</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* 출고 마스터 */}
+              <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow flex flex-col">
+                <div className="flex items-start gap-3 p-4 bg-slate-50/50 border-b border-slate-100">
+                  <div className="w-8 h-8 rounded bg-orange-500 text-white flex items-center justify-center font-bold text-sm shrink-0 shadow-sm">D</div>
+                  <div className="flex flex-col">
+                    <span className="text-[14px] font-bold text-orange-600 leading-tight">출고 마스터</span>
+                    <span className="text-[11px] text-slate-500 font-mono mt-0.5">dg_mst</span>
+                  </div>
+                </div>
+                <div className="p-4 flex-1 flex flex-col gap-4">
+                  <span className="text-[11px] text-slate-500">제품 출고 관리</span>
+                  <div className="flex items-center justify-center gap-8">
+                    <div className="text-center">
+                      <span className="block text-[16px] font-bold text-slate-800">7,820</span>
+                      <span className="block text-[10px] text-slate-400">레코드</span>
+                    </div>
+                    <div className="text-center">
+                      <span className="block text-[16px] font-bold text-slate-800">4</span>
+                      <span className="block text-[10px] text-slate-400">컬럼</span>
+                    </div>
+                  </div>
+                  <div className="mt-auto flex flex-col gap-1">
+                    <div className="flex justify-between items-center text-[10px] font-bold">
+                      <span className="text-slate-500">데이터 품질</span>
+                      <span className="text-emerald-500">97.9%</span>
+                    </div>
+                    <div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                      <div className="h-full bg-blue-600 w-[97.9%]"></div>
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between mt-1">
+                    <div className="flex gap-1.5">
+                      <span className="flex items-center gap-1 px-2 py-0.5 rounded-full border border-emerald-200 bg-emerald-50 text-[10px] font-bold text-emerald-600"><Zap className="w-3 h-3 fill-emerald-600" /> 벡터화됨</span>
+                      <span className="px-2 py-0.5 rounded-full border border-slate-200 text-[10px] font-bold text-slate-500">dbo</span>
+                    </div>
+                    <span className="text-[10px] text-slate-400">0일 전</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* 불량 마스터 */}
+              <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow flex flex-col">
+                <div className="flex items-start gap-3 p-4 bg-slate-50/50 border-b border-slate-100">
+                  <div className="w-8 h-8 rounded bg-indigo-500 text-white flex items-center justify-center font-bold text-sm shrink-0 shadow-sm">B</div>
+                  <div className="flex flex-col">
+                    <span className="text-[14px] font-bold text-indigo-600 leading-tight">불량 마스터</span>
+                    <span className="text-[11px] text-slate-500 font-mono mt-0.5">bad_mst</span>
+                  </div>
+                </div>
+                <div className="p-4 flex-1 flex flex-col gap-4">
+                  <span className="text-[11px] text-slate-500">품질 불량 관리</span>
+                  <div className="flex items-center justify-center gap-8">
+                    <div className="text-center">
+                      <span className="block text-[16px] font-bold text-slate-800">1,240</span>
+                      <span className="block text-[10px] text-slate-400">레코드</span>
+                    </div>
+                    <div className="text-center">
+                      <span className="block text-[16px] font-bold text-slate-800">4</span>
+                      <span className="block text-[10px] text-slate-400">컬럼</span>
+                    </div>
+                  </div>
+                  <div className="mt-auto flex flex-col gap-1">
+                    <div className="flex justify-between items-center text-[10px] font-bold">
+                      <span className="text-slate-500">데이터 품질</span>
+                      <span className="text-amber-500">84.8%</span>
+                    </div>
+                    <div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                      <div className="h-full bg-blue-600 w-[84.8%]"></div>
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between mt-1">
+                    <span className="px-2 py-0.5 rounded-full border border-slate-200 text-[10px] font-bold text-slate-500">dbo</span>
+                    <span className="text-[10px] text-slate-400">1일 전</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* 직원 마스터 */}
+              <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow flex flex-col">
+                <div className="flex items-start gap-3 p-4 bg-slate-50/50 border-b border-slate-100">
+                  <div className="w-8 h-8 rounded bg-amber-500 text-white flex items-center justify-center font-bold text-sm shrink-0 shadow-sm">E</div>
+                  <div className="flex flex-col">
+                    <span className="text-[14px] font-bold text-amber-600 leading-tight">직원 마스터</span>
+                    <span className="text-[11px] text-slate-500 font-mono mt-0.5">emp_mst</span>
+                  </div>
+                </div>
+                <div className="p-4 flex-1 flex flex-col gap-4">
+                  <span className="text-[11px] text-slate-500">직원 정보 및 조직도</span>
+                  <div className="flex items-center justify-center gap-8">
+                    <div className="text-center">
+                      <span className="block text-[16px] font-bold text-slate-800">156</span>
+                      <span className="block text-[10px] text-slate-400">레코드</span>
+                    </div>
+                    <div className="text-center">
+                      <span className="block text-[16px] font-bold text-slate-800">4</span>
+                      <span className="block text-[10px] text-slate-400">컬럼</span>
+                    </div>
+                  </div>
+                  <div className="mt-auto flex flex-col gap-1">
+                    <div className="flex justify-between items-center text-[10px] font-bold">
+                      <span className="text-slate-500">데이터 품질</span>
+                      <span className="text-blue-500">91.5%</span>
+                    </div>
+                    <div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                      <div className="h-full bg-blue-600 w-[91.5%]"></div>
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between mt-1">
+                    <span className="px-2 py-0.5 rounded-full border border-slate-200 text-[10px] font-bold text-slate-500">dbo</span>
+                    <span className="text-[10px] text-slate-400">3일 전</span>
+                  </div>
+                </div>
+              </div>
+
             </div>
           </div>
 
