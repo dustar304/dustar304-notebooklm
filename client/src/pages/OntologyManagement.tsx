@@ -17,7 +17,7 @@ import {
   CheckCircle2,
   TrendingUp,
   AlertTriangle
-} from 'lucide-react'
+, Sparkles, BarChart3} from 'lucide-react'
 
 export default function OntologyManagement() {
   const [activeTab, setActiveTab] = useState('개요')
@@ -470,7 +470,7 @@ export default function OntologyManagement() {
                   <div className="mt-4 grid grid-cols-2 gap-4 border-t border-slate-100 pt-4">
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 rounded-xl bg-purple-100 flex items-center justify-center text-purple-600">
-                        <Zap className="w-5 h-5" />
+                        <Sparkles className="w-5 h-5" />
                       </div>
                       <div className="flex flex-col">
                         <span className="text-xl font-bold text-slate-800 leading-none">7</span>
@@ -588,7 +588,7 @@ export default function OntologyManagement() {
                     </div>
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 rounded-xl bg-orange-100 flex items-center justify-center text-orange-600">
-                        <Activity className="w-5 h-5" />
+                        <BarChart3 className="w-5 h-5" />
                       </div>
                       <div className="flex flex-col">
                         <span className="text-xl font-bold text-slate-800 leading-none">81</span>
