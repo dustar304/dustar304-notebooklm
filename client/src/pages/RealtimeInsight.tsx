@@ -171,7 +171,8 @@ export default function RealtimeInsight() {
               </button>
             </div>
           </div>
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-2 shrink-0">
+          
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-2 shrink-0">
           <div className="bg-gradient-to-br from-blue-50 to-blue-100/50 rounded-xl border border-blue-200 shadow-sm overflow-hidden flex flex-col h-[110px]">
             <div className="flex items-center gap-2 px-3 py-2 bg-white/50 border-b border-blue-100">
               <span className="text-[13px] font-bold text-slate-800">탐지된 패턴</span>
@@ -372,5 +373,6 @@ export default function RealtimeInsight() {
 
       </div>
     </div>
+</div>
   )
 }
