@@ -156,7 +156,21 @@ export default function RealtimeInsight() {
           </div>
         </div>
 
-        {/* 4 Stats Cards */}
+        {/* Main Content Area based on Tab */}
+        <div className="flex flex-col gap-4 mt-2">
+          <div className="flex items-center justify-between">
+            <h2 className="text-[18px] font-bold text-slate-800">
+              패턴 매칭 & 시계열 분석
+            </h2>
+            <div className="flex gap-2">
+              <button className="flex items-center gap-2 px-3 py-1.5 text-[13px] font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-lg shadow-sm transition-colors">
+                <Search className="w-4 h-4" /> 패턴 검색
+              </button>
+              <button className="flex items-center gap-2 px-3 py-1.5 text-[13px] font-bold text-slate-700 bg-white border border-slate-200 hover:bg-slate-50 rounded-lg shadow-sm transition-colors">
+                <TrendingUp className="w-4 h-4 text-slate-400" /> 시계열 분석
+              </button>
+            </div>
+          </div>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-2 shrink-0">
           <div className="bg-gradient-to-br from-blue-50 to-blue-100/50 rounded-xl border border-blue-200 shadow-sm overflow-hidden flex flex-col h-[110px]">
             <div className="flex items-center gap-2 px-3 py-2 bg-white/50 border-b border-blue-100">
