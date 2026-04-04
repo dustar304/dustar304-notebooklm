@@ -76,7 +76,7 @@ const Sidebar = () => {
   const aiDataItems = [
     { icon: SlidersHorizontal, label: '데이터 분석 설정', path: '/ai-data-settings' },
     { icon: Network,           label: 'AI 온톨로지 분석', path: '/ai-ontology' },
-    { icon: Search,            label: '패턴 매칭',        path: '/ai-pattern' },
+    { icon: Search,            label: '온톨로지 관리',    path: '/ai-ontology-manage' },
   ]
 
   const renderMenuItem = (item: { icon: React.ElementType; label: string; path: string }, isSub = false) => {

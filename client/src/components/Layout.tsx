@@ -28,7 +28,7 @@ interface LayoutProps {
     '/cookie-policy': '쿠키정책',
     '/ai-data-settings': '데이터 분석 설정',
     '/ai-ontology': 'AI 온톨로지 분석',
-    '/ai-pattern': '패턴 매칭',
+    '/ai-ontology-manage': '온톨로지 관리',
   }
 
 /**
@@ -58,7 +58,7 @@ const Layout = ({ children }: LayoutProps) => {
     { label: '채팅', path: '/chat' },
     { label: '데이터 분석 설정', path: '/ai-data-settings' },
     { label: 'AI 온톨로지 분석', path: '/ai-ontology' },
-    { label: '패턴 매칭', path: '/ai-pattern' },
+    { label: '온톨로지 관리', path: '/ai-ontology-manage' },
   ]
 
   const filteredMenus = allMenus.filter(menu => 

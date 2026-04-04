@@ -28,7 +28,7 @@ const DefectTypeMaster = lazy(() => import('./pages/DefectTypeMaster'))
 // AI 데이터 분석 페이지
 const DataAnalysisSettings = lazy(() => import('./pages/DataAnalysisSettings'))
 const AIOntologyAnalysis = lazy(() => import('./pages/AIOntologyAnalysis'))
-const PatternMatching = lazy(() => import('./pages/PatternMatching'))
+const OntologyManagement = lazy(() => import('./pages/OntologyManagement'))
 
 const VALID_PATHS = [
   '/',
@@ -48,7 +48,7 @@ const VALID_PATHS = [
   '/sf-defect-types',
   '/ai-data-settings',
   '/ai-ontology',
-  '/ai-pattern',
+  '/ai-ontology-manage',
 ]
 
 function isValidPath(path: string) {
@@ -92,7 +92,7 @@ function PageManager() {
 
   const [aiDataSettingsLoaded, setAiDataSettingsLoaded] = useState(false)
   const [aiOntologyLoaded, setAiOntologyLoaded] = useState(false)
-  const [aiPatternLoaded, setAiPatternLoaded] = useState(false)
+  const [aiOntologyManageLoaded, setAiOntologyManageLoaded] = useState(false)
 
   useEffect(() => {
     if (path === '/video-maker') setVideoMakerLoaded(true)
@@ -105,7 +105,7 @@ function PageManager() {
     if (path === '/sf-defect-types') setSfDefectTypesLoaded(true)
     if (path === '/ai-data-settings') setAiDataSettingsLoaded(true)
     if (path === '/ai-ontology') setAiOntologyLoaded(true)
-    if (path === '/ai-pattern') setAiPatternLoaded(true)
+    if (path === '/ai-ontology-manage') setAiOntologyManageLoaded(true)
   }, [path])
 
   // 유효하지 않은 경로 → 홈으로 리다이렉트
@@ -232,10 +232,10 @@ function PageManager() {
         </div>
       )}
 
-      {aiPatternLoaded && (
-        <div className="flex-1 flex-col min-h-0 overflow-hidden" style={{ display: path === '/ai-pattern' ? 'flex' : 'none' }}>
+      {aiOntologyManageLoaded && (
+        <div className="flex-1 flex-col min-h-0 overflow-hidden" style={{ display: path === '/ai-ontology-manage' ? 'flex' : 'none' }}>
           <Suspense fallback={<SFLoading />}>
-            <PatternMatching />
+            <OntologyManagement />
           </Suspense>
         </div>
       )}
