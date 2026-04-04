@@ -318,17 +318,31 @@ export default function AIOntologyAnalysis() {
                 
                 <div className="flex flex-col items-center gap-2 text-center mt-4 md:mt-0 w-24">
                   <div className="w-12 h-12 rounded-full bg-white border border-slate-200 shadow-sm flex items-center justify-center text-slate-700">
-                    <FileText className="w-5 h-5" />
+                    <Database className="w-5 h-5" />
                   </div>
-                  <span className="text-[13px] font-bold text-slate-700 leading-tight">긴 문자열</span>
-                  <span className="text-[10px] text-slate-500">JSON Format</span>
+                  <span className="text-[13px] font-bold text-slate-700 leading-tight">개체 추출</span>
+                  <span className="text-[10px] text-slate-500">Nodes (Entity)</span>
+                </div>
+
+                <div className="hidden md:flex flex-col items-center flex-1 px-2">
+                  <div className="h-[1px] w-full bg-slate-300 relative">
+                    <div className="absolute right-0 top-1/2 -translate-y-1/2 border-[4px] border-transparent border-l-slate-300"></div>
+                  </div>
+                </div>
+
+                <div className="flex flex-col items-center gap-2 text-center mt-4 md:mt-0 w-24">
+                  <div className="w-12 h-12 rounded-full bg-white border border-slate-200 shadow-sm flex items-center justify-center text-slate-700">
+                    <Network className="w-5 h-5" />
+                  </div>
+                  <span className="text-[13px] font-bold text-slate-700 leading-tight">관계 정의</span>
+                  <span className="text-[10px] text-slate-500">Edges (Relation)</span>
                 </div>
 
                 <div className="hidden md:flex flex-col items-center flex-1 px-2">
                   <div className="h-[1px] w-full bg-blue-300 relative">
                     <div className="absolute right-0 top-1/2 -translate-y-1/2 border-[4px] border-transparent border-l-blue-300"></div>
                   </div>
-                  <span className="text-[10px] font-bold text-blue-500 mt-1.5 whitespace-nowrap bg-blue-50 px-2 py-0.5 rounded-full border border-blue-100">TF-IDF / 임베딩</span>
+                  <span className="text-[10px] font-bold text-blue-500 mt-1.5 whitespace-nowrap bg-blue-50 px-2 py-0.5 rounded-full border border-blue-100">Knowledge Graph</span>
                 </div>
 
                 <div className="flex flex-col items-center gap-2 text-center mt-4 md:mt-0 w-24">
@@ -336,8 +350,8 @@ export default function AIOntologyAnalysis() {
                     <div className="absolute inset-0 bg-blue-400/20 animate-pulse"></div>
                     <HardDrive className="w-5 h-5 relative z-10" />
                   </div>
-                  <span className="text-[13px] font-bold text-blue-600 leading-tight">JSON 캐싱</span>
-                  <span className="text-[10px] text-blue-400">Vector Store</span>
+                  <span className="text-[13px] font-bold text-blue-600 leading-tight">분산 그래프 DB</span>
+                  <span className="text-[10px] text-blue-400">Graph Database</span>
                 </div>
               </div>
 

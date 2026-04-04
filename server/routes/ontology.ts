@@ -13,47 +13,70 @@ if (!fs.existsSync(cacheDir)) {
   fs.mkdirSync(cacheDir, { recursive: true })
 }
 
-// Simple tokenizer
-function tokenize(text: string): string[] {
-  // Matches Korean characters, English words, and numbers
-  const words = text.match(/[가-힣]+|[a-zA-Z0-9]+/g) || []
-  return words.map(w => w.toLowerCase())
-}
-
-// Calculate TF
-function calculateTF(tokens: string[]): Record<string, number> {
-  const tf: Record<string, number> = {}
-  if (tokens.length === 0) return tf
-
-  tokens.forEach(token => {
-    tf[token] = (tf[token] || 0) + 1
-  })
-
-  // Normalize by total terms
-  for (const token in tf) {
-    tf[token] = tf[token] / tokens.length
-  }
-  return tf
-}
-
-// Calculate IDF
-function calculateIDF(documents: string[][]): Record<string, number> {
-  const idf: Record<string, number> = {}
-  const totalDocs = documents.length
+// 개체 추출(Node) 및 관계 정의(Edge) 알고리즘
+function extractNodesAndEdges(tableName: string, row: any) {
+  const nodes: any[] = []
+  const edges: any[] = []
   
-  const documentSets = documents.map(doc => new Set(doc))
+  // 1. Primary Node (Main Entity)
+  // 고유 식별자가 될만한 컬럼 찾기 (우선순위: id -> _id, _cd, _no 로 끝나는 컬럼 -> 첫번째 값)
+  const primaryIdCol = Object.keys(row).find(k => k === 'id') || 
+                       Object.keys(row).find(k => k.endsWith('_id') || k.endsWith('_cd') || k.endsWith('_no'))
   
-  const df: Record<string, number> = {}
-  documentSets.forEach(set => {
-    set.forEach(token => {
-      df[token] = (df[token] || 0) + 1
-    })
-  })
-
-  for (const token in df) {
-    idf[token] = Math.log(totalDocs / (1 + df[token]))
+  const primaryId = primaryIdCol ? row[primaryIdCol] : Object.values(row)[0] || Math.random().toString()
+  
+  const primaryNode = {
+    id: `${tableName}_${primaryId}`,
+    label: tableName,
+    properties: row
   }
-  return idf
+  nodes.push(primaryNode)
+
+  // 2. Related Entities (Foreign Keys / Attributes -> Nodes & Edges)
+  for (const [key, value] of Object.entries(row)) {
+    if (value === null || value === undefined || value === '') continue;
+    
+    // 외래키나 연관 엔티티로 추정되는 컬럼 (e.g. emp_id, item_cd, machine_cd, supplier_id 등)
+    if (key !== primaryIdCol && typeof value === 'string' && (key.endsWith('_id') || key.endsWith('_cd') || key.endsWith('_no'))) {
+      const targetLabel = key.replace(/_id$|_cd$|_no$/, '')
+      const relatedNodeId = `${targetLabel}_${value}`
+      
+      const relatedNode = {
+        id: relatedNodeId,
+        label: targetLabel,
+        properties: { [key]: value }
+      }
+      nodes.push(relatedNode)
+      
+      // Edge (Relation)
+      edges.push({
+        source: primaryNode.id,
+        target: relatedNode.id,
+        type: `HAS_${targetLabel.toUpperCase()}`,
+        properties: { fromColumn: key }
+      })
+    } 
+    // 예제 시나리오 대응: 불량(Defect), 결과(Result) 관련 키워드가 있을 경우 독립적인 Node/Edge로 분리
+    else if (key.includes('defect') || key === 'result' || key === 'status') {
+      const relatedNodeId = `${key}_${value}`
+      nodes.push({
+        id: relatedNodeId,
+        label: key,
+        properties: { value: value }
+      })
+      edges.push({
+        source: primaryNode.id,
+        target: relatedNodeId,
+        type: `HAS_${key.toUpperCase()}`,
+        properties: { fromColumn: key }
+      })
+    }
+  }
+
+  // Deduplicate nodes
+  const uniqueNodes = Array.from(new Map(nodes.map(n => [n.id, n])).values())
+  
+  return { nodes: uniqueNodes, edges }
 }
 
 // Get available tables
@@ -100,41 +123,28 @@ router.post('/vectorize', async (req, res) => {
       return res.status(400).json({ error: 'Table is empty' })
     }
 
-    // 2. Convert to Long String (JSON Format)
-    const documents = rows.map((row: any) => JSON.stringify(row))
-    
-    // 3. TF-IDF / Embedding
-    const tokenizedDocs = documents.map((doc: string) => tokenize(doc))
-    const idf = calculateIDF(tokenizedDocs)
-    
-    const vectorCache = rows.map((row: any, index: number) => {
-      const tokens = tokenizedDocs[index]
-      const tf = calculateTF(tokens)
-      const tfidf: Record<string, number> = {}
-      
-      for (const token in tf) {
-        tfidf[token] = tf[token] * (idf[token] || 0)
-      }
-
+    // 2 & 3. Extract Nodes and Edges
+    const graphData = rows.map((row: any) => {
+      const { nodes, edges } = extractNodesAndEdges(tableName, row)
       return {
         originalRow: row,
-        documentString: documents[index],
-        vector: tfidf, // TF-IDF representation
+        nodes,
+        edges,
         metadata: {
           model: embeddingModel,
-          vectorType: 'sparse',
+          vectorType: 'graph_representation',
           timestamp: new Date().toISOString()
         }
       }
     })
 
-    // 4. JSON Caching
+    // 4. JSON Caching (Distributed Graph DB Simulation)
     const cachePath = path.join(cacheDir, `${tableName}.json`)
-    fs.writeFileSync(cachePath, JSON.stringify(vectorCache, null, 2), 'utf-8')
+    fs.writeFileSync(cachePath, JSON.stringify(graphData, null, 2), 'utf-8')
 
     res.json({ 
       success: true, 
-      message: `Table ${tableName} successfully vectorized and cached.`,
+      message: `Table ${tableName} successfully converted to graph and cached.`,
       documentCount: rows.length 
     })
   } catch (error) {
@@ -164,38 +174,27 @@ router.post('/vectorize-all', async (req, res) => {
         const rows = await query(`SELECT * FROM ${tableName}`)
         if (rows.length === 0) continue
 
-        const documents = rows.map((row: any) => JSON.stringify(row))
-        const tokenizedDocs = documents.map((doc: string) => tokenize(doc))
-        const idf = calculateIDF(tokenizedDocs)
-        
-        const vectorCache = rows.map((row: any, index: number) => {
-          const tokens = tokenizedDocs[index]
-          const tf = calculateTF(tokens)
-          const tfidf: Record<string, number> = {}
-          
-          for (const token in tf) {
-            tfidf[token] = tf[token] * (idf[token] || 0)
-          }
-
+        const graphData = rows.map((row: any) => {
+          const { nodes, edges } = extractNodesAndEdges(tableName, row)
           return {
             originalRow: row,
-            documentString: documents[index],
-            vector: tfidf,
+            nodes,
+            edges,
             metadata: {
               model: embeddingModel,
-              vectorType: 'sparse',
+              vectorType: 'graph_representation',
               timestamp: new Date().toISOString()
             }
           }
         })
 
         const cachePath = path.join(cacheDir, `${tableName}.json`)
-        fs.writeFileSync(cachePath, JSON.stringify(vectorCache, null, 2), 'utf-8')
+        fs.writeFileSync(cachePath, JSON.stringify(graphData, null, 2), 'utf-8')
         
         successCount++
         totalDocs += rows.length
       } catch (err) {
-        console.error(`Error vectorizing ${tableName}:`, err)
+        console.error(`Error converting ${tableName} to graph:`, err)
       }
     }
 
