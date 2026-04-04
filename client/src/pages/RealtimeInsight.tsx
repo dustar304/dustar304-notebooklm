@@ -63,7 +63,7 @@ export default function RealtimeInsight() {
           <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4 flex flex-col justify-center relative overflow-hidden h-[100px]">
             <span className="text-[12px] font-bold text-slate-500 mb-1">데이터 수집</span>
             <div className="flex items-end gap-1">
-              <span className="text-2xl font-bold text-slate-800">1361</span>
+              <span className="text-2xl font-bold text-slate-800">1203</span>
               <span className="text-[13px] font-bold text-slate-800 mb-1">/s</span>
             </div>
             <Database className="absolute right-4 bottom-4 w-8 h-8 text-blue-500" strokeWidth={1.5} />
@@ -72,7 +72,7 @@ export default function RealtimeInsight() {
           <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4 flex flex-col justify-center relative overflow-hidden h-[100px]">
             <span className="text-[12px] font-bold text-slate-500 mb-1">처리된 레코드</span>
             <div className="flex items-end gap-1">
-              <span className="text-2xl font-bold text-slate-800">38,295</span>
+              <span className="text-2xl font-bold text-slate-800">47,430</span>
             </div>
             <BarChart2 className="absolute right-4 bottom-4 w-8 h-8 text-[#10b981]" strokeWidth={1.5} />
           </div>
@@ -80,7 +80,7 @@ export default function RealtimeInsight() {
           <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4 flex flex-col justify-center relative overflow-hidden h-[100px]">
             <span className="text-[12px] font-bold text-slate-500 mb-1">활성 연결</span>
             <div className="flex items-end gap-1">
-              <span className="text-2xl font-bold text-slate-800">13</span>
+              <span className="text-2xl font-bold text-slate-800">14</span>
             </div>
             <Network className="absolute right-4 bottom-4 w-8 h-8 text-[#a855f7]" strokeWidth={1.5} />
           </div>
@@ -88,29 +88,29 @@ export default function RealtimeInsight() {
           <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4 flex flex-col justify-center relative overflow-hidden h-[100px]">
             <span className="text-[12px] font-bold text-slate-500 mb-1">시스템 부하</span>
             <div className="flex items-end gap-1">
-              <span className="text-2xl font-bold text-slate-800">91.0%</span>
+              <span className="text-2xl font-bold text-slate-800">66.0%</span>
             </div>
             <TrendingUp className="absolute right-4 top-4 w-8 h-8 text-[#ea580c]" strokeWidth={1.5} />
             <div className="absolute bottom-4 left-4 right-4 h-2 bg-slate-100 rounded-full overflow-hidden">
-              <div className="h-full bg-blue-600 w-[91%] rounded-full"></div>
+              <div className="h-full bg-blue-600 w-[66%] rounded-full"></div>
             </div>
           </div>
 
           <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4 flex flex-col justify-center relative overflow-hidden h-[100px]">
             <span className="text-[12px] font-bold text-slate-500 mb-1">메모리 사용</span>
             <div className="flex items-end gap-1">
-              <span className="text-2xl font-bold text-slate-800">90.0%</span>
+              <span className="text-2xl font-bold text-slate-800">66.0%</span>
             </div>
             <Zap className="absolute right-4 top-4 w-8 h-8 text-[#eab308]" strokeWidth={1.5} />
             <div className="absolute bottom-4 left-4 right-4 h-2 bg-slate-100 rounded-full overflow-hidden">
-              <div className="h-full bg-blue-600 w-[90%] rounded-full"></div>
+              <div className="h-full bg-blue-600 w-[66%] rounded-full"></div>
             </div>
           </div>
 
           <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4 flex flex-col justify-center relative overflow-hidden h-[100px]">
             <span className="text-[12px] font-bold text-slate-500 mb-1">이상 탐지</span>
             <div className="flex items-end gap-1">
-              <span className="text-2xl font-bold text-[#ef4444]">2</span>
+              <span className="text-2xl font-bold text-[#ef4444]">1</span>
             </div>
             <Shield className="absolute right-4 bottom-4 w-8 h-8 text-[#ef4444]" strokeWidth={1.5} />
           </div>
@@ -126,7 +126,7 @@ export default function RealtimeInsight() {
           <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4 flex flex-col justify-center relative overflow-hidden h-[100px]">
             <span className="text-[12px] font-bold text-slate-500 mb-1">업데이트</span>
             <div className="flex items-end gap-1 mt-1">
-              <span className="text-[13px] font-bold text-slate-500">오후 1:58:43</span>
+              <span className="text-[13px] font-bold text-slate-500">오후 2:10:48</span>
             </div>
             <Clock className="absolute right-4 top-4 w-8 h-8 text-slate-400" strokeWidth={1.5} />
           </div>
