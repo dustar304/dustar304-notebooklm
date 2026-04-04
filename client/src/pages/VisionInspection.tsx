@@ -490,13 +490,13 @@ export default function VisionInspectionPage() {
                         </div>
                       </div>
                       <div>
-                        <h3 className="text-white font-bold text-sm tracking-wide">VISION MATRIX #1 (IPC-001)</h3>
-                        <p className="text-slate-500 text-[10px] font-semibold mt-0.5">OFFLINE</p>
+                        <h3 className="text-white font-bold text-sm tracking-wide">VIEWORKS HIGH-RES CAMERA</h3>
+                        <p className="text-slate-500 text-[10px] font-semibold mt-0.5 font-mono">Waiting for Edge Application connection...</p>
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
                       <div className="w-2 h-2 rounded-full bg-slate-500"></div>
-                      <span className="text-slate-400 text-xs font-bold tracking-widest">DISCONNECTED</span>
+                      <span className="text-slate-400 text-xs font-bold tracking-widest">OFFLINE</span>
                     </div>
                   </div>
                   
@@ -512,18 +512,24 @@ export default function VisionInspectionPage() {
                         <div className="w-[20px] h-[20px] border-[4px] border-current rounded-md"></div>
                       </div>
                     </div>
-                    <p className="text-sm font-medium">하드웨어 연결을 시작해주세요.</p>
+                    <div className="text-center">
+                      <p className="text-sm font-medium mb-1">엣지 브릿지(Python) 애플리케이션 연결이 필요합니다.</p>
+                      <p className="text-[11px] text-slate-600">현장 PC에서 Vieworks VIS7 SDK를 구동하여 획득한 이미지를<br/>ERP 서버 API로 스트리밍하십시오.</p>
+                    </div>
                   </div>
                 </div>
                 
                 {/* Recent Received Data Log */}
-                <div className="h-40 bg-[#0f172a] rounded-xl border border-slate-800 shadow-inner flex flex-col overflow-hidden shrink-0">
-                  <div className="bg-slate-100 px-4 py-2 border-b border-slate-200 flex items-center gap-2">
-                    <Grid className="w-4 h-4 text-slate-500" />
-                    <span className="text-slate-700 text-xs font-bold">최근 수신 데이터 (Raw Data API 연동부)</span>
+                <div className="h-32 bg-[#0f172a] rounded-xl border border-slate-800 shadow-inner flex flex-col overflow-hidden shrink-0">
+                  <div className="bg-slate-100 px-4 py-2 border-b border-slate-200 flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Grid className="w-4 h-4 text-slate-500" />
+                      <span className="text-slate-700 text-xs font-bold">VIS7 Middleware Raw Data (API 수신)</span>
+                    </div>
+                    <span className="text-[10px] text-slate-500 font-mono">Port : 5000</span>
                   </div>
-                  <div className="flex-1 p-4 flex flex-col text-slate-400 text-xs justify-center items-center">
-                     {/* Placeholder for raw data */}
+                  <div className="flex-1 p-4 flex flex-col text-slate-500 text-xs justify-center items-center font-mono">
+                    데이터 대기 중...
                   </div>
                 </div>
               </div>
@@ -561,8 +567,8 @@ export default function VisionInspectionPage() {
                   </div>
                   
                   <div className="flex flex-col flex-1 min-h-[200px]">
-                    <span className="text-xs font-bold text-slate-700 mb-2">실시간 판정 로그</span>
-                    <div className="flex-1 bg-slate-50 border border-slate-100 rounded-lg flex items-center justify-center text-xs text-slate-400 font-medium">
+                    <span className="text-[13px] font-bold text-slate-700 mb-2">뷰웍스 VIS7 판정 로그</span>
+                    <div className="flex-1 bg-slate-50 border border-slate-100 rounded-lg flex items-center justify-center text-xs text-slate-400 font-medium p-4">
                       수신된 데이터가 없습니다.
                     </div>
                   </div>
@@ -573,7 +579,7 @@ export default function VisionInspectionPage() {
                     <Link className="w-4 h-4" /> 장비 실시간 연결 (API)
                   </button>
                   <div className="flex gap-2">
-                    <button className="flex-1 h-10 rounded-lg bg-white hover:bg-slate-50 text-slate-400 font-medium text-xs border border-slate-200 flex items-center justify-center gap-1.5 transition-colors">
+                    <button className="flex-1 h-10 rounded-lg bg-slate-50 hover:bg-slate-100 text-slate-400 font-medium text-xs border border-slate-200 flex items-center justify-center gap-1.5 transition-colors">
                       <Bug className="w-3.5 h-3.5" /> 강제 불량 수신 테스트
                     </button>
                     <button className="flex-1 h-10 rounded-lg bg-white hover:bg-slate-50 text-slate-600 font-medium text-xs border border-slate-200 flex items-center justify-center gap-1.5 transition-colors">
