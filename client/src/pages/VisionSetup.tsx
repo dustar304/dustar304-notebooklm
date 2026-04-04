@@ -519,7 +519,7 @@ export default function VisionSetupPage() {
                         </div>
 
                         <button className="w-full py-3 bg-[#4f46e5] hover:bg-[#4338ca] text-white font-bold rounded-lg shadow-sm transition-colors flex items-center justify-center gap-2">
-                          <Save className="w-4 h-4" /> 하드웨어 연동 설정 저장
+                          <Save className="w-4 h-4" /> 하드웨어 연동 설정 저장 (VIS7 SDK)
                         </button>
                       </div>
                   </div>
