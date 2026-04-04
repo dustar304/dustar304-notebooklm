@@ -17,7 +17,7 @@ import {
   CheckCircle2,
   TrendingUp,
   AlertTriangle
-, Sparkles, BarChart3} from 'lucide-react'
+, Sparkles, BarChart3, Play, Activity} from 'lucide-react'
 
 export default function OntologyManagement() {
   const [activeTab, setActiveTab] = useState('개요')
@@ -649,10 +649,195 @@ export default function OntologyManagement() {
                       </div>
                     ))}
                   </div>
+                
+
+          {activeTab === '리니지' && (
+            <div className="flex flex-col gap-4">
+              <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+                {/* 리니지 복잡도 분석 (Radar Chart) */}
+                <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-5 flex flex-col">
+                  <h3 className="flex items-center gap-2 text-[14px] font-bold text-indigo-600 mb-1">
+                    <GitBranch className="w-4 h-4" /> 리니지 복잡도 분석
+                  </h3>
+                  <p className="text-[10px] text-slate-400 mb-6">데이터 리니지의 복잡도를 레벨별(단순, 보통, 복잡, 매우복잡)로 분석하여 레이더 차트로 표시합니다. 각 복잡도 레벨에 해당하는 데이터 플로우의 분포를 확인할 수 있습니다.</p>
+                  
+                  <div className="flex-1 flex relative min-h-[240px] px-4 py-6">
+                    {/* Chart Container */}
+                    <div className="flex-1 relative flex items-center justify-center">
+                      <svg width="220" height="220" viewBox="-120 -120 240 240" className="overflow-visible">
+                        {/* Background Polygons */}
+                        {[1, 0.75, 0.5, 0.25].map((scale, i) => (
+                          <polygon 
+                            key={i}
+                            points="0,-100 100,0 0,100 -100,0" 
+                            fill="none" 
+                            stroke="#e2e8f0" 
+                            strokeWidth="1" 
+                            transform={`scale(${scale})`}
+                          />
+                        ))}
+                        
+                        {/* Axes */}
+                        <line x1="0" y1="-100" x2="0" y2="100" stroke="#cbd5e1" strokeWidth="1" />
+                        <line x1="-100" y1="0" x2="100" y2="0" stroke="#cbd5e1" strokeWidth="1" />
+                        
+                        {/* Data Polygon with Animation */}
+                        <style>
+                          {`
+                            @keyframes scaleUp {
+                              from { transform: scale(0); opacity: 0; }
+                              to { transform: scale(1); opacity: 1; }
+                            }
+                          `}
+                        </style>
+                        {/* Data Points: Top(단순): 40%, Right(보통): 80%, Bottom(복잡): 60%, Left(매우복잡): 30% */}
+                        {/* 0,-40  80,0  0,60  -30,0 */}
+                        <g style={{ transformOrigin: '0 0', animation: 'scaleUp 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards' }}>
+                          <polygon 
+                            points="0,-40 80,0 0,60 -30,0" 
+                            fill="#818cf8" 
+                            fillOpacity="0.4" 
+                            stroke="#6366f1" 
+                            strokeWidth="2" 
+                          />
+                          {/* Data point dots */}
+                          <circle cx="0" cy="-40" r="4" fill="#6366f1" />
+                          <circle cx="80" cy="0" r="4" fill="#6366f1" />
+                          <circle cx="0" cy="60" r="4" fill="#6366f1" />
+                          <circle cx="-30" cy="0" r="4" fill="#6366f1" />
+                        </g>
+
+                        {/* Labels */}
+                        <text x="0" y="-115" textAnchor="middle" className="text-[11px] fill-slate-500 font-medium">단순</text>
+                        <text x="115" y="4" textAnchor="start" className="text-[11px] fill-slate-500 font-medium">보통</text>
+                        <text x="0" y="125" textAnchor="middle" className="text-[11px] fill-slate-500 font-medium">복잡</text>
+                        <text x="-115" y="4" textAnchor="end" className="text-[11px] fill-slate-500 font-medium">매우복잡</text>
+                        
+                        {/* Small values near axes (optional) */}
+                        <text x="5" y="-18" className="text-[8px] fill-slate-400">20</text>
+                        <text x="5" y="-38" className="text-[8px] fill-slate-400">40</text>
+                        <text x="5" y="-58" className="text-[8px] fill-slate-400">60</text>
+                        <text x="5" y="-78" className="text-[8px] fill-slate-400">80</text>
+                      </svg>
+                    </div>
+
+                    {/* Legend */}
+                    <div className="absolute right-0 top-1/2 -translate-y-1/2 flex flex-col gap-4 pl-4 border-l border-slate-100">
+                      <div className="flex items-start gap-2">
+                        <div className="w-3 h-3 bg-indigo-500 mt-0.5 shrink-0 rounded-sm"></div>
+                        <div className="flex flex-col">
+                          <span className="text-[11px] font-bold text-slate-700">데이터 플로우 수</span>
+                          <span className="text-[9px] text-slate-400">복잡도 레벨별 데이터 플로우 분포</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 데이터 플로우 추이 (Area Chart) */}
+                <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-5 flex flex-col">
+                  <h3 className="flex items-center gap-2 text-[14px] font-bold text-blue-600 mb-1">
+                    <Activity className="w-4 h-4" /> 데이터 플로우 추이
+                  </h3>
+                  <p className="text-[10px] text-slate-400 mb-6">월별 데이터 플로우 수의 변화를 영역 차트로 표시합니다. 데이터 간 데이터 이동과 변환 과정의 추이를 시간에 따라 확인할 수 있습니다.</p>
+                  
+                  <div className="flex-1 flex items-end relative min-h-[240px] px-8">
+                    {/* Y-axis labels */}
+                    <div className="absolute left-0 top-0 bottom-6 flex flex-col justify-between text-[10px] text-slate-400 pr-2 pb-2 h-full">
+                      <span>120</span><span>90</span><span>60</span><span>30</span><span>0</span>
+                    </div>
+                    
+                    {/* Grid lines */}
+                    <div className="absolute left-6 right-32 top-0 bottom-6 flex flex-col justify-between h-full pointer-events-none">
+                      {[0, 1, 2, 3, 4].map((i) => (
+                        <div key={i} className="w-full h-[1px] bg-slate-100 border-b border-dashed border-slate-200/50"></div>
+                      ))}
+                    </div>
+
+                    {/* Area Chart SVG */}
+                    <div className="w-[calc(100%-8rem)] h-[calc(100%-1.5rem)] absolute left-6 bottom-6" style={{ animation: 'revealRight 1.5s cubic-bezier(0.25, 1, 0.5, 1) forwards' }}>
+                      <svg className="w-full h-full overflow-visible" preserveAspectRatio="none">
+                        <defs>
+                          <linearGradient id="gradientFlow" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" stopColor="#818cf8" stopOpacity="0.7" />
+                            <stop offset="100%" stopColor="#818cf8" stopOpacity="0.1" />
+                          </linearGradient>
+                        </defs>
+                        <svg viewBox="0 0 110 100" preserveAspectRatio="none" className="w-full h-full overflow-visible">
+                          <g>
+                            {/* 파란색/보라색 영역 */}
+                            <path 
+                              d="M 0,40 Q 5,42 10,40 T 20,25 T 30,35 T 40,45 T 50,20 T 60,35 T 70,10 T 80,5 T 90,5 T 100,5 T 110,15 L 110,100 L 0,100 Z" 
+                              fill="url(#gradientFlow)" 
+                            />
+                            <path 
+                              d="M 0,40 Q 5,42 10,40 T 20,25 T 30,35 T 40,45 T 50,20 T 60,35 T 70,10 T 80,5 T 90,5 T 100,5 T 110,15" 
+                              fill="none" stroke="#6366f1" strokeWidth="1.5" vectorEffect="non-scaling-stroke"
+                            />
+                          </g>
+                        </svg>
+                      </svg>
+                      {/* X-axis labels and ticks */}
+                      <div className="absolute top-full left-0 right-0 flex items-center justify-between">
+                        {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map((i) => (
+                          <div key={i} className="flex flex-col items-center w-0" style={{ left: `${(i / 11) * 100}%`, position: 'absolute' }}>
+                            <div className="w-[1px] h-1 bg-slate-300"></div>
+                            <span className="text-[10px] text-slate-500 mt-1 whitespace-nowrap">{i + 1}월</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                    
+                    {/* Legend */}
+                    <div className="absolute right-0 top-1/2 -translate-y-1/2 flex flex-col gap-4 pl-4 border-l border-slate-100">
+                      <div className="flex items-start gap-2">
+                        <div className="w-3 h-3 bg-indigo-500 mt-0.5 shrink-0 rounded-sm"></div>
+                        <div className="flex flex-col">
+                          <span className="text-[11px] font-bold text-slate-700">데이터 플로우</span>
+                          <span className="text-[9px] text-slate-400">월별 데이터 플로우 수 변화</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* 데이터 리니지 하단 섹션 */}
+              <div className="bg-[#f8fafc] rounded-xl border border-slate-200 flex flex-col mt-2 overflow-hidden shadow-sm">
+                <div className="bg-white p-5 flex items-center justify-between border-b border-slate-200 shadow-[0_1px_2px_rgba(0,0,0,0.02)] z-10">
+                  <div>
+                    <h3 className="flex items-center gap-2 text-[15px] font-bold text-indigo-600 mb-1">
+                      <GitBranch className="w-4 h-4" /> 데이터 리니지
+                    </h3>
+                    <p className="text-[11px] text-slate-500">데이터의 생명주기와 변환 과정을 추적합니다</p>
+                  </div>
+                  <button className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold py-2 px-4 rounded-lg shadow-sm transition-colors">
+                    <Play className="w-4 h-4 fill-current" /> 리니지 분석 시작
+                  </button>
+                </div>
+                
+                {/* Empty State / Main Content Area */}
+                <div className="flex-1 flex flex-col items-center justify-center p-16 min-h-[300px] bg-gradient-to-b from-white to-slate-50/50">
+                  <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mb-4 text-slate-400 shadow-[inset_0_2px_4px_rgba(0,0,0,0.06)] border border-slate-200/50">
+                    <GitBranch className="w-8 h-8" />
+                  </div>
+                  <h4 className="text-[18px] font-bold text-slate-800 mb-2">데이터 리니지 분석</h4>
+                  <p className="text-[13px] text-slate-500 text-center max-w-md mb-6">
+                    데이터의 생명주기와 변환 과정을 분석하여 데이터 흐름을 시각화합니다.
+                  </p>
+                  <button className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold py-2 px-6 rounded-lg shadow-md hover:shadow-lg transition-all hover:-translate-y-0.5">
+                    <Play className="w-4 h-4 fill-current" /> 리니지 분석 시작
+                  </button>
                 </div>
               </div>
             </div>
           )}
+
+        </div>
+      </div>
+    </div>
+  )
+}
 
         </div>
       </div>
